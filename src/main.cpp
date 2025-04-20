@@ -38,38 +38,64 @@ bool point_in_shape(const sf::ConvexShape &shape, const sf::Vector2f &point) {
   return inside;
 }
 
-sf::VertexArray get_turret() {
-  sf::VertexArray blob(sf::TriangleFan);
-  // Center point (approximately the center of the shape)
-  blob.append(sf::Vertex({101.0f, 149.5f}, sf::Color::White)); // index 0
+struct Turret {
+  sf::VertexArray path;
+  sf::Vector2f center;
+  float curr_angle;
+  float rotation_speed;
 
-  const static std::vector<sf::Vector2f> points = {
-      {103.0f, 0.0f},   // Top center
-      {140.0f, 5.0f},   // Upper-right curve
-      {180.0f, 60.0f},  // Right middle bulge
-      {202.0f, 130.0f}, // Right top third
-      {202.0f, 252.0f}, // Right bottom
-      {180.0f, 280.0f}, // Bottom-right curve
-      {140.0f, 294.0f}, // Bottom center right
-      {103.0f, 299.0f}, // Bottom center
-      {66.0f, 294.0f},  // Bottom center left
-      {26.0f, 280.0f},  // Bottom-left curve
-      {0.0f, 252.0f},   // Left bottom
-      {0.0f, 130.0f},   // Left top third
-      {22.0f, 60.0f},   // Left middle bulge
-      {66.0f, 5.0f},    // Upper-left curve
-      {99.0f, 0.0f}     // Back to near start
-  };
+  int fire_timer;
 
-  for (auto point : points) {
-    blob.append(sf::Vertex(point, sf::Color::White));
+  Turret(const sf::Vector2f tile_center)
+      : path(sf::TriangleFan), curr_angle(90.f), rotation_speed(0.5f),
+        fire_timer(500) {
+
+    const static std::vector<sf::Vector2f> points = {
+        {102.5f, 0.0f}, // Top center
+        {122.5f, 2.0f},   {142.0f, 8.0f},   {160.0f, 20.0f},  {175.0f, 35.0f},
+        {185.0f, 55.0f},  {192.0f, 75.0f},  {197.0f, 100.0f}, {200.0f, 125.0f},
+        {200.5f, 149.5f}, // Right mid
+
+        {198.0f, 165.0f}, {192.0f, 180.0f}, {182.0f, 190.0f}, {165.0f, 195.0f},
+        {140.0f, 198.0f}, {122.0f, 199.5f}, {102.5f, 200.0f}, // Bottom center
+
+        {83.0f, 199.5f},  {65.0f, 198.0f},  {40.0f, 195.0f},  {23.0f, 190.0f},
+        {13.0f, 180.0f},  {7.0f, 165.0f},   {4.0f, 149.5f}, // Left mid
+
+        {4.0f, 125.0f},   {7.0f, 100.0f},   {13.0f, 75.0f},   {23.0f, 55.0f},
+        {38.0f, 35.0f},   {55.0f, 20.0f},   {73.0f, 8.0f},    {92.5f, 2.0f},
+        {102.5f, 0.0f} // Closing at top center
+    };
+
+    for (auto point : points) {
+      path.append(sf::Vertex(point, sf::Color(200, 200, 200)));
+    }
+
+    // Closing loop
+    path.append(sf::Vertex(path[1]));
+
+
+    for (const auto &pt : points) {
+      path.append(sf::Vertex(pt));
+    }
+
+    // 2. Move the shape so it's centered around (0,0)
+    for (std::size_t i = 0; i < path.getVertexCount(); ++i) {
+      path[i].position -= {points[0].x, 175.f}; // shape center
+    }
+
+    // 3. Then we'll place it on the desired tile center
+    sf::Transform transform;
+    transform.translate(tile_center);
+    transform.scale(0.15f, 0.15f);
+
+    center = tile_center;
+
+    for (std::size_t i = 0; i < path.getVertexCount(); ++i) {
+      path[i].position = transform.transformPoint(path[i].position);
+    }
   }
-
-  // Closing loop
-  blob.append(sf::Vertex(points[1], sf::Color::White));
-
-  return blob;
-}
+};
 
 int main() {
   sf::Vector2i screen_size(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -79,7 +105,12 @@ int main() {
   setup_window(window, screen_size);
   Board board(BOARD_ROWS, BOARD_COLS, TILE_SIZE_PX, screen_size);
 
-  sf::VertexArray turret = get_turret();
+  std::vector<Turret> turrets;
+
+  for (auto &tile : board.m_tiles) {
+    turrets.emplace_back(Turret(tile.m_shape.getPosition()));
+  }
+
 
   // GAMEPLAY LOOP
   while (window.isOpen()) {
@@ -107,7 +138,13 @@ int main() {
     // DRAW
     window.clear();
     board.draw(window);
-    window.draw(turret);
+
+
+    for (auto &turret : turrets) {
+      window.draw(turret.path);
+    }
+
+
     window.display();
   }
 }
