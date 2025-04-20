@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <cmath>
 #include <vector>
 
 #include "../include/board.h"
@@ -38,8 +39,17 @@ bool point_in_shape(const sf::ConvexShape &shape, const sf::Vector2f &point) {
   return inside;
 }
 
+sf::CircleShape build_circle() {
+  sf::CircleShape circle(12.f);
+  circle.setFillColor(sf::Color(100, 100, 100));
+  circle.setOrigin(10.f, 10.f);
+
+  return circle;
+}
+
 struct Turret {
-  sf::VertexArray path;
+  sf::VertexArray base_shape;
+  sf::CircleShape barrel_shape;
   sf::Vector2f center;
   float curr_angle;
   float rotation_speed;
@@ -47,8 +57,8 @@ struct Turret {
   int fire_timer;
 
   Turret(const sf::Vector2f tile_center, const float tile_size)
-      : path(sf::TriangleFan), curr_angle(90.f), rotation_speed(0.5f),
-        fire_timer(500) {
+      : base_shape(sf::TriangleFan), barrel_shape(build_circle()),
+        curr_angle(90.f), rotation_speed(0.5f), fire_timer(500) {
 
     const static std::vector<sf::Vector2f> points = {
         {1, 0.74771},           {0.990843, 0.800013},   {0.964488, 0.846115},
@@ -73,20 +83,20 @@ struct Turret {
         {0.9854, 0.588407},     {0.993032, 0.641234},   {0.998085, 0.694371}};
 
     for (auto point : points) {
-      path.append(sf::Vertex(point, sf::Color(200, 200, 200)));
+      base_shape.append(sf::Vertex(point, sf::Color(200, 200, 200)));
     }
 
     // Closing loop
-    path.append(sf::Vertex(path[1]));
+    base_shape.append(sf::Vertex(base_shape[1]));
 
 
     for (const auto &pt : points) {
-      path.append(sf::Vertex(pt));
+      base_shape.append(sf::Vertex(pt));
     }
 
-    // // 2. Move the shape so it's centered around (0,0)
-    for (std::size_t i = 0; i < path.getVertexCount(); ++i) {
-      path[i].position -= {.5f, .8f};
+    // // 2. Move the shape so the "base" is centered around (0,0)
+    for (std::size_t i = 0; i < base_shape.getVertexCount(); ++i) {
+      base_shape[i].position -= {.48f, .8f};
     }
 
     // 3. Then we'll place it on the desired tile center
@@ -96,9 +106,11 @@ struct Turret {
 
     center = tile_center;
 
-    for (std::size_t i = 0; i < path.getVertexCount(); ++i) {
-      path[i].position = transform.transformPoint(path[i].position);
+    for (std::size_t i = 0; i < base_shape.getVertexCount(); ++i) {
+      base_shape[i].position = transform.transformPoint(base_shape[i].position);
     }
+
+    barrel_shape.setPosition(tile_center + sf::Vector2f(0, -10));
   }
 };
 
@@ -112,9 +124,16 @@ int main() {
 
   std::vector<Turret> turrets;
 
-  for (auto &tile : board.m_tiles) {
-    turrets.emplace_back(Turret(tile.m_shape.getPosition(), TILE_SIZE_PX));
-  }
+  turrets.emplace_back(
+      Turret(board.m_tiles[0].m_shape.getPosition(), TILE_SIZE_PX));
+  //   for (auto &tile : board.m_tiles) {
+  //     turrets.emplace_back(Turret(tile.m_shape.getPosition(), TILE_SIZE_PX));
+  //   }
+
+
+  float angle = 0.f;
+  float ellipse_width = 100.f;
+  float ellipse_height = 50.f;
 
 
   // GAMEPLAY LOOP
@@ -140,13 +159,32 @@ int main() {
       }
     }
 
+    // UPDATE
+    angle += .005;
+
+    const sf::Vector2f ellipse_center(board.m_tiles[0].m_shape.getPosition().x,
+                                      board.m_tiles[0].m_shape.getPosition().y -
+                                          30);
+
+    const float a = ellipse_width / 2.f;
+    const float b = ellipse_height / 2.f;
+    const float x = ellipse_center.x + a * std::cos(angle);
+    const float y = ellipse_center.y + b * std::sin(angle);
+    turrets[0].barrel_shape.setPosition(x, y);
+
     // DRAW
     window.clear();
     board.draw(window);
 
 
     for (auto &turret : turrets) {
-      window.draw(turret.path);
+      if (turret.barrel_shape.getPosition().y > ellipse_center.y) {
+        window.draw(turret.base_shape);
+        window.draw(turret.barrel_shape);
+      } else {
+        window.draw(turret.barrel_shape);
+        window.draw(turret.base_shape);
+      }
     }
 
 
