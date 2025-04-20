@@ -38,6 +38,39 @@ bool point_in_shape(const sf::ConvexShape &shape, const sf::Vector2f &point) {
   return inside;
 }
 
+sf::VertexArray get_turret() {
+  sf::VertexArray blob(sf::TriangleFan);
+  // Center point (approximately the center of the shape)
+  blob.append(sf::Vertex({101.0f, 149.5f}, sf::Color::White)); // index 0
+
+  const static std::vector<sf::Vector2f> points = {
+      {103.0f, 0.0f},   // Top center
+      {140.0f, 5.0f},   // Upper-right curve
+      {180.0f, 60.0f},  // Right middle bulge
+      {202.0f, 130.0f}, // Right top third
+      {202.0f, 252.0f}, // Right bottom
+      {180.0f, 280.0f}, // Bottom-right curve
+      {140.0f, 294.0f}, // Bottom center right
+      {103.0f, 299.0f}, // Bottom center
+      {66.0f, 294.0f},  // Bottom center left
+      {26.0f, 280.0f},  // Bottom-left curve
+      {0.0f, 252.0f},   // Left bottom
+      {0.0f, 130.0f},   // Left top third
+      {22.0f, 60.0f},   // Left middle bulge
+      {66.0f, 5.0f},    // Upper-left curve
+      {99.0f, 0.0f}     // Back to near start
+  };
+
+  for (auto point : points) {
+    blob.append(sf::Vertex(point, sf::Color::White));
+  }
+
+  // Closing loop
+  blob.append(sf::Vertex(points[1], sf::Color::White));
+
+  return blob;
+}
+
 int main() {
   sf::Vector2i screen_size(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -45,6 +78,8 @@ int main() {
   sf::RenderWindow window;
   setup_window(window, screen_size);
   Board board(BOARD_ROWS, BOARD_COLS, TILE_SIZE_PX, screen_size);
+
+  sf::VertexArray turret = get_turret();
 
   // GAMEPLAY LOOP
   while (window.isOpen()) {
@@ -72,6 +107,7 @@ int main() {
     // DRAW
     window.clear();
     board.draw(window);
+    window.draw(turret);
     window.display();
   }
 }
