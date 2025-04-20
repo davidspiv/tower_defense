@@ -6,7 +6,6 @@
 
 struct Tile {
   sf::Vector2f m_origin;
-  float m_size;
   sf::ConvexShape m_shape;
 
   Tile(sf::Vector2f origin, float size);
@@ -36,7 +35,7 @@ public:
 };
 
 Tile::Tile(sf::Vector2f origin, float size)
-    : m_origin(origin), m_size(size), m_shape(sf::ConvexShape(4)) {
+    : m_origin(origin), m_shape(sf::ConvexShape(4)) {
   m_shape.setPoint(0, sf::Vector2f(0.f, -size / 2.f));
   m_shape.setPoint(1, sf::Vector2f(size, 0.f));
   m_shape.setPoint(2, sf::Vector2f(0.f, size / 2.f));
