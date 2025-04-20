@@ -18,9 +18,10 @@ private:
   const size_t m_cols;
   const float m_tile_size; // in grid-space
   const sf::Vector2f m_screen_size;
-  std::vector<Tile> m_tiles;
 
 public:
+  std::vector<Tile> m_tiles;
+
   Board(unsigned rows, unsigned cols, float tile_size,
         sf::Vector2i screen_size);
 
