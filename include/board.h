@@ -39,9 +39,9 @@ struct Tile {
     const float x_offset = screen_width / 2.f;
 
     const float isometric_board_height =
-        (board.cols + board.rows - 1) * (size / 8.f);
+        (board.cols + board.rows - 1) * (size / 4.f);
 
-    const float y_offset = 0;
+    const float y_offset = (screen_height / 2.f) - isometric_board_height;
 
     shape.setPosition(isometric_origin + sf::Vector2f(x_offset, y_offset));
     shape.setFillColor(sf::Color(0, 0, 0));
