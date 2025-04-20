@@ -50,6 +50,7 @@ sf::CircleShape build_circle() {
 struct Turret {
   sf::VertexArray base_shape;
   sf::CircleShape barrel_shape;
+  sf::Vector2f ellipse_center;
   sf::Vector2f center;
   float curr_angle;
   float rotation_speed;
@@ -58,7 +59,8 @@ struct Turret {
 
   Turret(const sf::Vector2f tile_center, const float tile_size)
       : base_shape(sf::TriangleFan), barrel_shape(build_circle()),
-        curr_angle(90.f), rotation_speed(0.5f), fire_timer(500) {
+        ellipse_center(0, 0), center(0, 0), curr_angle(90.f),
+        rotation_speed(0.5f), fire_timer(500) {
 
     const static std::vector<sf::Vector2f> points = {
         {1, 0.74771},           {0.990843, 0.800013},   {0.964488, 0.846115},
@@ -124,16 +126,15 @@ int main() {
 
   std::vector<Turret> turrets;
 
-  turrets.emplace_back(
-      Turret(board.m_tiles[0].m_shape.getPosition(), TILE_SIZE_PX));
-  //   for (auto &tile : board.m_tiles) {
-  //     turrets.emplace_back(Turret(tile.m_shape.getPosition(), TILE_SIZE_PX));
-  //   }
+
+  for (auto &tile : board.m_tiles) {
+    turrets.emplace_back(Turret(tile.m_shape.getPosition(), TILE_SIZE_PX));
+  }
 
 
   float angle = 0.f;
-  float ellipse_width = 100.f;
-  float ellipse_height = 50.f;
+  float ellipse_width = 90.f;
+  float ellipse_height = 45.f;
 
 
   // GAMEPLAY LOOP
@@ -151,6 +152,7 @@ int main() {
 
     const sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
 
+    // UPDATE
     for (auto &tile : board.m_tiles) {
       if (point_in_shape(tile.m_shape, sf::Vector2f(mouse_pos))) {
         tile.m_shape.setFillColor(sf::Color(100, 100, 100));
@@ -159,18 +161,19 @@ int main() {
       }
     }
 
-    // UPDATE
     angle += .005;
 
-    const sf::Vector2f ellipse_center(board.m_tiles[0].m_shape.getPosition().x,
-                                      board.m_tiles[0].m_shape.getPosition().y -
-                                          30);
+    for (auto &turret : turrets) {
+      turret.ellipse_center =
+          sf::Vector2f(turret.center.x, turret.center.y - 30.f);
 
-    const float a = ellipse_width / 2.f;
-    const float b = ellipse_height / 2.f;
-    const float x = ellipse_center.x + a * std::cos(angle);
-    const float y = ellipse_center.y + b * std::sin(angle);
-    turrets[0].barrel_shape.setPosition(x, y);
+      const float a = ellipse_width / 2.f;
+      const float b = ellipse_height / 2.f;
+      const float x = turret.ellipse_center.x + a * std::cos(angle);
+      const float y = turret.ellipse_center.y + b * std::sin(angle);
+      turret.barrel_shape.setPosition(x, y);
+    }
+
 
     // DRAW
     window.clear();
@@ -178,7 +181,7 @@ int main() {
 
 
     for (auto &turret : turrets) {
-      if (turret.barrel_shape.getPosition().y > ellipse_center.y) {
+      if (turret.barrel_shape.getPosition().y > turret.ellipse_center.y) {
         window.draw(turret.base_shape);
         window.draw(turret.barrel_shape);
       } else {
