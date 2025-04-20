@@ -7,20 +7,22 @@
 #include "../include/util.h"
 
 int main() {
-  const unsigned w_width = 1920;
-  const unsigned w_height = 1080;
+  const unsigned screen_width = 1920;
+  const unsigned screen_height = 1080;
 
   // WINDOW SETUP
   sf::RenderWindow window;
-  setup_window(window, w_width, w_height);
+  setup_window(window, screen_width, screen_height);
 
   // BOARD
+  const float rows = 16;
+  const float cols = 16;
   const float tile_size = 16;
-  const Board board(w_width, w_height, tile_size);
-  std::vector<Tile> tiles = get_tiles(board, w_width, w_height);
+
+  Board board(rows, cols, tile_size, screen_width, screen_height);
 
   // GAMEPLAY LOOP
-  while (window.isOpen()) {
+  while (window.isOpen()) { 
     /*
     ****************************************
     Handle the players input
@@ -41,7 +43,7 @@ int main() {
     */
     window.clear();
 
-    for (auto& tile : tiles) {
+    for (auto& tile : board.tiles) {
       window.draw(tile.shape);
     }
 
