@@ -15,10 +15,9 @@ int main() {
   setup_window(window, w_width, w_height);
 
   // BOARD
-  const float tile_size = 100;
+  const float tile_size = 124;
   const Board board(w_width, w_height, tile_size);
-  const sf::VertexArray grid = build_grid(board);
-  std::vector<Tile> tiles = get_tiles(board);
+  std::vector<Tile> tiles = get_tiles(board, w_width, w_height);
 
   // GAMEPLAY LOOP
   while (window.isOpen()) {
@@ -35,7 +34,6 @@ int main() {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
       window.close();
     }
-
     /*
     ****************************************
     Draw the scene
@@ -46,8 +44,6 @@ int main() {
     for (auto& tile : tiles) {
       window.draw(tile.shape);
     }
-
-    // window.draw(grid);
 
     window.display();  // Show what was drawn
   }

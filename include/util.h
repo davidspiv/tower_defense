@@ -19,4 +19,24 @@ void setup_window(sf::RenderWindow& window, const unsigned w_width,
                       static_cast<int>(desktop.height / 2 - w_height / 2)});
 }
 
+sf::ConvexShape make_horizontal_hexagon(sf::Vector2f position,
+                                        float tile_size) {
+  float w = tile_size;
+  float h = tile_size / 2.f;
+
+  sf::ConvexShape hex;
+  hex.setPointCount(6);
+
+  hex.setPoint(0, sf::Vector2f(0.f, -h));             // top
+  hex.setPoint(1, sf::Vector2f(w / 2.f, -h / 2.f));   // top-right
+  hex.setPoint(2, sf::Vector2f(w / 2.f, h / 2.f));    // bottom-right
+  hex.setPoint(3, sf::Vector2f(0.f, h));              // bottom
+  hex.setPoint(4, sf::Vector2f(-w / 2.f, h / 2.f));   // bottom-left
+  hex.setPoint(5, sf::Vector2f(-w / 2.f, -h / 2.f));  // top-left
+
+  hex.setPosition(position);
+
+  return hex;
+}
+
 #endif
