@@ -6,6 +6,15 @@
 
 enum Tile_Role { EMPTY, TURRET, TOWER, SPAWN };
 
+struct Board {
+  const size_t rows;
+  const size_t cols;
+  const float tile_size;
+
+  Board(unsigned w_width, unsigned w_height, float tile_size)
+      : rows(32), cols(32), tile_size(tile_size) {}
+};
+
 struct Tile {
   sf::Vector2f origin;
   const float size;
@@ -28,20 +37,11 @@ struct Tile {
     sf::Vector2f isometric_origin{origin.x - origin.y,
                                   (origin.x + origin.y) / 2.f};
 
-    shape.setPosition(isometric_origin - sf::Vector2f(0.f, size / 2.f));
+    shape.setPosition(isometric_origin - sf::Vector2f(0.f, (size / 2.f)));
     shape.setFillColor(sf::Color(0, 0, 0));
     shape.setOutlineThickness(2.f);
     shape.setOutlineColor(sf::Color(250, 150, 100));
   }
-};
-
-struct Board {
-  const size_t rows;
-  const size_t cols;
-  const float tile_size;
-
-  Board(unsigned w_width, unsigned w_height, float tile_size)
-      : rows(4), cols(4), tile_size(tile_size) {}
 };
 
 std::vector<Tile> get_tiles(const Board& board, const float screen_width,
