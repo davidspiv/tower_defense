@@ -15,7 +15,7 @@ int main() {
   setup_window(window, w_width, w_height);
 
   // BOARD
-  const float tile_size = 124;
+  const float tile_size = 144;
   const Board board(w_width, w_height, tile_size);
   std::vector<Tile> tiles = get_tiles(board, w_width, w_height);
 

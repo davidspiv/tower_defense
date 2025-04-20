@@ -28,8 +28,7 @@ struct Tile {
     sf::Vector2f isometric_origin{origin.x - origin.y,
                                   (origin.x + origin.y) / 2.f};
 
-    shape.setPosition(isometric_origin + sf::Vector2f(size / 2.f, size / 2.f) +
-                      sf::Vector2f(4 * size, -1.5 * size));
+    shape.setPosition(isometric_origin - sf::Vector2f(0.f, size / 2.f));
     shape.setFillColor(sf::Color(0, 0, 0));
     shape.setOutlineThickness(2.f);
     shape.setOutlineColor(sf::Color(250, 150, 100));
@@ -42,7 +41,7 @@ struct Board {
   const float tile_size;
 
   Board(unsigned w_width, unsigned w_height, float tile_size)
-      : rows(3), cols(3), tile_size(tile_size) {}
+      : rows(4), cols(4), tile_size(tile_size) {}
 };
 
 std::vector<Tile> get_tiles(const Board& board, const float screen_width,
@@ -50,15 +49,12 @@ std::vector<Tile> get_tiles(const Board& board, const float screen_width,
   std::vector<Tile> tiles;
   tiles.reserve(board.cols * board.rows);
 
-  const float x_offset =
-      screen_width / 2.f - (board.tile_size * board.cols / 2.f);
-  const float y_offset =
-      screen_height / 2.f - (board.tile_size * board.rows / 2.f);
+  const double x_offset = screen_width / 2.f;
 
   for (size_t row = 0; row < board.rows; ++row) {
     for (size_t col = 0; col < board.cols; ++col) {
       float x = col * board.tile_size + x_offset;
-      float y = row * board.tile_size + y_offset;
+      float y = row * board.tile_size;
       Tile tile(sf::Vector2f(x, y), board.tile_size, EMPTY);
       tiles.emplace_back(tile);
     }
