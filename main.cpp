@@ -29,7 +29,8 @@ int main() {
     */
     sf::Event event;
     while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) window.close();
+      if (event.type == sf::Event::Closed)
+        window.close();
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
@@ -44,6 +45,6 @@ int main() {
 
     board.draw(window);
 
-    window.display();  // Show what was drawn
+    window.display(); // Show what was drawn
   }
 }
