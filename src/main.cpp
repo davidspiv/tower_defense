@@ -88,7 +88,6 @@ int main() {
     }
 
     angle += .005;
-
     for (auto &turret : turrets) {
       const float a = ellipse_width / 2.f;
       const float b = ellipse_height / 2.f;
