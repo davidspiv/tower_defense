@@ -23,13 +23,19 @@ int main() {
   setup_window(window, screen_dim);
   Board board(grid_dim, TILE_SIZE_PX, screen_dim);
 
+  const sf::Vector2f spawn_pos = board.m_tiles[0].m_shape.getPosition();
+  const sf::Vector2f tower_pos = board.m_tiles[5].m_shape.getPosition();
+
   std::vector<Enemy> enemies;
   std::vector<Bullet> bullets;
   std::vector<Turret> turrets;
 
-  for (auto &tile : board.m_tiles) {
-    turrets.emplace_back(Turret(tile.m_shape.getPosition(), TILE_SIZE_PX));
-  }
+  //   turrets.emplace_back(
+  //       Turret(board.m_tiles[0].m_shape.getPosition(), TILE_SIZE_PX));
+
+  //   for (auto &tile : board.m_tiles) {
+  //     turrets.emplace_back(Turret(tile.m_shape.getPosition(), TILE_SIZE_PX));
+  //   }
 
   // GAMEPLAY LOOP
   while (window.isOpen()) {
@@ -56,6 +62,8 @@ int main() {
       }
     }
 
+    update_enemies(enemies, spawn_pos, tower_pos);
+
     for (auto &turret : turrets) {
       turret.update();
     }
@@ -63,6 +71,10 @@ int main() {
     // DRAW
     window.clear();
     board.draw(window);
+
+    for (auto &enemy : enemies) {
+      window.draw(enemy.shape);
+    }
 
     for (auto &turret : turrets) {
       if (turret.barrel_shape.getPosition().y > turret.barrel_anchor.y) {

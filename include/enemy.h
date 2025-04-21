@@ -6,25 +6,32 @@
 #include "util.h"
 
 struct Enemy {
-  sf::Vector2f center;
   sf::CircleShape shape;
   float speed;
   float health;
+  sf::Vector2f spawn_pos;
+  sf::Vector2f tower_pos;
 
-  Enemy(const sf::Vector2f spawn_pos, const float speed)
-      : center(spawn_pos),
-        shape(build_circle(spawn_pos, sf::Color(200, 200, 200), 20.f)),
-        speed(speed), health(100) {}
+  Enemy(const sf::Vector2f spawn_pos, const sf::Vector2f tower_pos);
 
   void update() {
-    center.x += speed;
+    sf::Vector2f dir = tower_pos - shape.getPosition(); // reversed direction
+    float len = calc_dist(shape.getPosition(), tower_pos);
 
-    shape.setPosition(center.x - shape.getRadius(),
-                      center.y - shape.getRadius());
+    if (len != 0.0f)
+      dir /= len; // normalize
+
+    shape.setPosition(shape.getPosition() + dir * speed);
   }
 };
 
-void update_enemies(std::vector<Enemy> &enemies, const sf::Vector2f spawn_pos) {
+Enemy::Enemy(const sf::Vector2f spawn_pos, const sf::Vector2f tower_pos)
+    : shape(build_circle(spawn_pos, sf::Color(200, 200, 200), 20.f)),
+      speed(.1f), health(100), spawn_pos(spawn_pos), tower_pos(tower_pos) {}
+
+
+void update_enemies(std::vector<Enemy> &enemies, const sf::Vector2f spawn_pos,
+                    const sf::Vector2f tower_pos) {
   for (size_t i = 0; i < enemies.size(); i++) {
     enemies[i].update();
     if (enemies[i].health <= 0) {
@@ -33,7 +40,7 @@ void update_enemies(std::vector<Enemy> &enemies, const sf::Vector2f spawn_pos) {
   }
 
   if (enemies.empty()) {
-    Enemy enemy(spawn_pos, 0.1);
+    Enemy enemy(spawn_pos, tower_pos);
     enemies.emplace_back(enemy);
   }
 }
