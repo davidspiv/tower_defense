@@ -7,6 +7,7 @@
 
 struct Tile {
   sf::Vector2f m_origin;
+  sf::Vector2f m_screen_pos;
   sf::ConvexShape m_shape;
 
   Tile(const sf::Vector2f origin, const unsigned size);
@@ -21,8 +22,10 @@ struct Board {
 
   Board(sf::Vector2u grid_dim, unsigned tile_size, sf::Vector2i screen_dim);
 
+  sf::Vector2f to_screen_centered_pos(const sf::Vector2f &origin) const;
+
   // Converts a 2D grid coordinate to a screen-centered isometric position
-  sf::Vector2f to_screen_isometric_pos(const sf::Vector2f &origin) const;
+  sf::Vector2f to_iso_pos(const sf::Vector2f &origin) const;
 
   // Fills the board with tiles and positions them in isometric layout
   void populate_tiles();
@@ -55,20 +58,18 @@ Board::Board(sf::Vector2u grid_dim, const unsigned tile_size,
   populate_tiles();
 };
 
+sf::Vector2f Board::to_screen_centered_pos(const sf::Vector2f &origin) const {
+  float iso_board_height =
+      (m_grid_dim.x + m_grid_dim.y - 1) * (m_tile_size / 4.f);
+  float x_offset = m_screen_dim.x / 2.f;
+  float y_offset = (m_screen_dim.y / 2.f - iso_board_height);
 
-sf::Vector2f Board::to_screen_isometric_pos(const sf::Vector2f &origin) const {
-  auto to_screen_center = [this](const sf::Vector2f &origin) {
-    float iso_board_height =
-        (m_grid_dim.x + m_grid_dim.y - 1) * (m_tile_size / 4.f);
-    float x_offset = m_screen_dim.x / 2.f;
-    float y_offset = m_screen_dim.y / 2.f - iso_board_height;
+  return origin + sf::Vector2f(x_offset, y_offset);
+}
 
-    return origin + sf::Vector2f(x_offset, y_offset);
-  };
 
-  const sf::Vector2f iso_pos(origin.x - origin.y, (origin.x + origin.y) / 2.f);
-
-  return to_screen_center(iso_pos);
+sf::Vector2f Board::to_iso_pos(const sf::Vector2f &origin) const {
+  return sf::Vector2f(origin.x - origin.y, (origin.x + origin.y) / 2.f);
 }
 
 
@@ -81,8 +82,9 @@ void Board::populate_tiles() {
       float y = static_cast<float>(row * m_tile_size);
       Tile tile(sf::Vector2f(x, y), m_tile_size);
 
-      const sf::Vector2f tile_pos = to_screen_isometric_pos(tile.m_origin);
-      tile.m_shape.setPosition(tile_pos);
+      const sf::Vector2f tile_pos = to_iso_pos(tile.m_origin);
+      tile.m_screen_pos = to_screen_centered_pos(tile_pos);
+      tile.m_shape.setPosition(tile.m_screen_pos);
 
       m_tiles.emplace_back(std::move(tile));
     }
