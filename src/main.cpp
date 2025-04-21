@@ -117,12 +117,13 @@ struct Turret {
 };
 
 int main() {
-  sf::Vector2i screen_size(SCREEN_WIDTH, SCREEN_HEIGHT);
+  const sf::Vector2i grid_dimensions(BOARD_ROWS, BOARD_COLS);
+  const sf::Vector2i screen_dimensions(SCREEN_WIDTH, SCREEN_HEIGHT);
 
   // SETUP
   sf::RenderWindow window;
-  setup_window(window, screen_size);
-  Board board(BOARD_ROWS, BOARD_COLS, TILE_SIZE_PX, screen_size);
+  setup_window(window, screen_dimensions);
+  Board board(grid_dimensions, TILE_SIZE_PX, screen_dimensions);
 
   std::vector<Turret> turrets;
 
