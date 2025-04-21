@@ -12,7 +12,6 @@ constexpr unsigned BOARD_ROWS = 5;
 constexpr unsigned BOARD_COLS = 5;
 constexpr unsigned TILE_SIZE_PX = 100; // height gets halved in iso-space
 
-
 // LLM code, probably should just store grid-space and iso-space coords in tile
 bool point_in_shape(const sf::ConvexShape &shape, const sf::Vector2f &point) {
   // Transform the shape points to global coordinates
@@ -91,13 +90,10 @@ int main() {
     angle += .005;
 
     for (auto &turret : turrets) {
-      turret.ellipse_center =
-          sf::Vector2f(turret.center.x, turret.center.y - 30.f);
-
       const float a = ellipse_width / 2.f;
       const float b = ellipse_height / 2.f;
-      const float x = turret.ellipse_center.x + a * std::cos(angle);
-      const float y = turret.ellipse_center.y + b * std::sin(angle);
+      const float x = turret.barrel_ellipse_center.x + a * std::cos(angle);
+      const float y = turret.barrel_ellipse_center.y + b * std::sin(angle);
       turret.barrel_shape.setPosition(x, y);
     }
 
@@ -108,7 +104,8 @@ int main() {
 
 
     for (auto &turret : turrets) {
-      if (turret.barrel_shape.getPosition().y > turret.ellipse_center.y) {
+      if (turret.barrel_shape.getPosition().y >
+          turret.barrel_ellipse_center.y) {
         window.draw(turret.base_shape);
         window.draw(turret.barrel_shape);
       } else {
