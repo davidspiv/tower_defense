@@ -4,20 +4,22 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+
 struct Tile {
   sf::Vector2f m_origin;
   sf::ConvexShape m_shape;
 
-  Tile(const sf::Vector2f origin, const float size);
+  Tile(const sf::Vector2f origin, const unsigned size);
 };
 
+
 struct Board {
-  const sf::Vector2i m_grid_dimensions;
-  const float m_tile_size;
+  const sf::Vector2u m_grid_dimensions;
+  const unsigned m_tile_size;
   const sf::Vector2i m_screen_dimensions;
   std::vector<Tile> m_tiles;
 
-  Board(sf::Vector2i grid_dimensions, float tile_size,
+  Board(sf::Vector2u grid_dimensions, unsigned tile_size,
         sf::Vector2i screen_dimensions);
 
   // Converts a 2D grid coordinate to a screen-centered isometric position
@@ -30,24 +32,30 @@ struct Board {
   void draw(sf::RenderWindow &window);
 };
 
-Tile::Tile(const sf::Vector2f origin, const float size)
+
+Tile::Tile(const sf::Vector2f origin, const unsigned size)
     : m_origin(origin), m_shape(sf::ConvexShape(4)) {
-  m_shape.setPoint(0, sf::Vector2f(0.f, -size / 2.f));
-  m_shape.setPoint(1, sf::Vector2f(size, 0.f));
-  m_shape.setPoint(2, sf::Vector2f(0.f, size / 2.f));
-  m_shape.setPoint(3, sf::Vector2f(-size, 0.f));
+
+  const float size_f = static_cast<float>(size);
+
+  m_shape.setPoint(0, sf::Vector2f(0.f, -size_f / 2.f));
+  m_shape.setPoint(1, sf::Vector2f(size_f, 0.f));
+  m_shape.setPoint(2, sf::Vector2f(0.f, size_f / 2.f));
+  m_shape.setPoint(3, sf::Vector2f(-size_f, 0.f));
 
   m_shape.setFillColor(sf::Color(0, 0, 0));
   m_shape.setOutlineThickness(2.f);
   m_shape.setOutlineColor(sf::Color(250, 150, 100));
 }
 
-Board::Board(sf::Vector2i grid_dimensions, const float tile_size,
+
+Board::Board(sf::Vector2u grid_dimensions, const unsigned tile_size,
              sf::Vector2i screen_dimensions)
     : m_grid_dimensions(grid_dimensions), m_tile_size(tile_size),
       m_screen_dimensions(sf::Vector2f(screen_dimensions)) {
   populate_tiles();
 };
+
 
 sf::Vector2f
 Board::to_screen_isometric_position(const sf::Vector2f &origin) const {
@@ -65,13 +73,14 @@ Board::to_screen_isometric_position(const sf::Vector2f &origin) const {
   return to_screen_center(iso_pos);
 }
 
+
 void Board::populate_tiles() {
   m_tiles.reserve(m_grid_dimensions.x * m_grid_dimensions.y);
 
-  for (int row = 0; row < m_grid_dimensions.x; ++row) {
-    for (int col = 0; col < m_grid_dimensions.y; ++col) {
-      float x = col * m_tile_size;
-      float y = row * m_tile_size;
+  for (unsigned row = 0; row < m_grid_dimensions.x; ++row) {
+    for (unsigned col = 0; col < m_grid_dimensions.y; ++col) {
+      float x = static_cast<float>(col * m_tile_size);
+      float y = static_cast<float>(row * m_tile_size);
       Tile tile(sf::Vector2f(x, y), m_tile_size);
 
       const sf::Vector2f tile_pos = to_screen_isometric_position(tile.m_origin);
@@ -81,6 +90,7 @@ void Board::populate_tiles() {
     }
   }
 }
+
 
 void Board::draw(sf::RenderWindow &window) {
   for (auto &tile : m_tiles) {
