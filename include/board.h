@@ -25,7 +25,10 @@ struct Board {
   sf::Vector2f to_screen_centered_pos(const sf::Vector2f &origin) const;
 
   // Converts a 2D grid coordinate to a screen-centered isometric position
-  sf::Vector2f to_iso_pos(const sf::Vector2f &origin) const;
+  sf::Vector2f iso_to_screen(const sf::Vector2f &origin) const;
+
+  bool point_in_iso_tile(const sf::Vector2f &screen_point, const Tile &tile,
+                         const float tile_size);
 
   // Fills the board with tiles and positions them in isometric layout
   void populate_tiles();
@@ -68,8 +71,20 @@ sf::Vector2f Board::to_screen_centered_pos(const sf::Vector2f &origin) const {
 }
 
 
-sf::Vector2f Board::to_iso_pos(const sf::Vector2f &origin) const {
-  return sf::Vector2f(origin.x - origin.y, (origin.x + origin.y) / 2.f);
+sf::Vector2f Board::iso_to_screen(const sf::Vector2f &iso_pos) const {
+  return sf::Vector2f(iso_pos.x - iso_pos.y, (iso_pos.x + iso_pos.y) / 2.f);
+}
+
+
+bool Board::point_in_iso_tile(const sf::Vector2f &screen_point,
+                              const Tile &tile, const float tile_size) {
+  const sf::Vector2f screen_pos =
+      screen_point - tile.m_screen_pos + sf::Vector2f(0.f, tile_size / 2.f);
+
+  float x = (2.f * screen_pos.y + screen_pos.x) / 2.f;
+  float y = (2.f * screen_pos.y - screen_pos.x) / 2.f;
+
+  return (x >= 0.f && x <= tile_size && y >= 0.f && y <= tile_size);
 }
 
 
@@ -82,7 +97,7 @@ void Board::populate_tiles() {
       float y = static_cast<float>(row * m_tile_size);
       Tile tile(sf::Vector2f(x, y), m_tile_size);
 
-      const sf::Vector2f tile_pos = to_iso_pos(tile.m_origin);
+      const sf::Vector2f tile_pos = iso_to_screen(tile.m_origin);
       tile.m_screen_pos = to_screen_centered_pos(tile_pos);
       tile.m_shape.setPosition(tile.m_screen_pos);
 
