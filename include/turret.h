@@ -7,21 +7,26 @@
 
 struct Turret {
   sf::VertexArray base_shape;
+  const float rotation_speed;
+  const int fire_timer;
+
   sf::CircleShape barrel_shape;
   sf::Vector2f barrel_anchor;
-  float curr_angle;
-  float rotation_speed;
-
-  int fire_timer;
+  const float barrel_ellipse_width;
+  const float barrel_ellipse_height;
+  float barrel_angle;
 
   Turret(const sf::Vector2f tile_center, const unsigned tile_size);
+
+  void update();
 };
 
 
 Turret::Turret(const sf::Vector2f tile_center, const unsigned tile_size)
-    : base_shape(sf::TriangleFan), barrel_shape(build_circle()),
-      barrel_anchor(tile_center), curr_angle(90.f),
-      rotation_speed(0.5f), fire_timer(500) {
+    : base_shape(sf::TriangleFan), rotation_speed(0.5f), fire_timer(500),
+      barrel_shape(build_circle()), barrel_anchor(tile_center),
+      barrel_ellipse_width(90.f), barrel_ellipse_height(45.f),
+      barrel_angle(90.f) {
 
   const static std::vector<sf::Vector2f> base_shape_pts = {
       {1, 0.74771},           {0.990843, 0.800013},   {0.964488, 0.846115},
@@ -47,9 +52,7 @@ Turret::Turret(const sf::Vector2f tile_center, const unsigned tile_size)
       {1, 0.74771}, // closed loop
   };
 
-  sf::Vector2f barrel_anchor_offset(0.f, 35.f);
-  barrel_anchor -= barrel_anchor_offset;
-
+  // HANDLE TURRET BASE
   for (const auto &pt : base_shape_pts) {
     base_shape.append(sf::Vertex(pt, sf::Color(200, 200, 200)));
   }
@@ -59,7 +62,7 @@ Turret::Turret(const sf::Vector2f tile_center, const unsigned tile_size)
     base_shape[i].position -= {.48f, .8f};
   }
 
-  // place it on the desired tile center
+  // place base on the desired tile center
   const float tile_size_f = static_cast<float>(tile_size);
   sf::Transform transform;
   transform.translate(tile_center);
@@ -69,7 +72,22 @@ Turret::Turret(const sf::Vector2f tile_center, const unsigned tile_size)
     base_shape[i].position = transform.transformPoint(base_shape[i].position);
   }
 
+  // HANDLE TURRET BARREL
+  const sf::Vector2f barrel_anchor_offset(0.f, 35.f);
+  barrel_anchor -= barrel_anchor_offset;
   barrel_shape.setPosition(tile_center + sf::Vector2f(0, -10));
 }
+
+
+void Turret::update() {
+  barrel_angle += .005;
+
+  const float a = barrel_ellipse_width / 2.f;
+  const float b = barrel_ellipse_height / 2.f;
+  const float x = barrel_anchor.x + a * std::cos(barrel_angle);
+  const float y = barrel_anchor.y + b * std::sin(barrel_angle);
+  barrel_shape.setPosition(x, y);
+}
+
 
 #endif

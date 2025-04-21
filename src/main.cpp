@@ -1,4 +1,6 @@
 #include "../include/board.h"
+#include "../include/bullet.h"
+#include "../include/enemy.h"
 #include "../include/turret.h"
 #include "../include/util.h"
 
@@ -21,15 +23,13 @@ int main() {
   setup_window(window, screen_dim);
   Board board(grid_dim, TILE_SIZE_PX, screen_dim);
 
+  std::vector<Enemy> enemies;
+  std::vector<Bullet> bullets;
   std::vector<Turret> turrets;
 
   for (auto &tile : board.m_tiles) {
     turrets.emplace_back(Turret(tile.m_shape.getPosition(), TILE_SIZE_PX));
   }
-
-  float angle = 0.f;
-  float ellipse_width = 90.f;
-  float ellipse_height = 45.f;
 
   // GAMEPLAY LOOP
   while (window.isOpen()) {
@@ -48,20 +48,16 @@ int main() {
 
     // UPDATE
     for (auto &tile : board.m_tiles) {
-      if (board.point_in_iso_tile(sf::Vector2f(mouse_pos), tile, board.m_tile_size)) {
+      if (board.point_in_iso_tile(sf::Vector2f(mouse_pos), tile,
+                                  board.m_tile_size)) {
         tile.m_shape.setFillColor(sf::Color(100, 100, 100));
       } else {
         tile.m_shape.setFillColor(sf::Color(0, 0, 0));
       }
     }
 
-    angle += .005;
     for (auto &turret : turrets) {
-      const float a = ellipse_width / 2.f;
-      const float b = ellipse_height / 2.f;
-      const float x = turret.barrel_anchor.x + a * std::cos(angle);
-      const float y = turret.barrel_anchor.y + b * std::sin(angle);
-      turret.barrel_shape.setPosition(x, y);
+      turret.update();
     }
 
     // DRAW

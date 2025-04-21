@@ -2,6 +2,7 @@
 #define UTIL_H
 
 #include <SFML/Graphics.hpp>
+#include <cmath>
 
 
 // set window dimensions and center in desktop environment
@@ -17,6 +18,12 @@ void setup_window(sf::RenderWindow &window, sf::Vector2i screen_size) {
 }
 
 
+auto calc_dist(const sf::Vector2f coord_a, const sf::Vector2f coord_b) {
+  sf::Vector2f mag = coord_b - coord_a;
+  return std::sqrt(mag.x * mag.x + mag.y * mag.y);
+}
+
+
 sf::CircleShape build_circle() {
   sf::CircleShape circle(12.f);
   circle.setFillColor(sf::Color(100, 100, 100));
@@ -24,5 +31,15 @@ sf::CircleShape build_circle() {
 
   return circle;
 }
+
+
+sf::CircleShape build_circle(const sf::Vector2f pos, sf::Color color,
+                             float radius) {
+  sf::CircleShape shape(radius);
+  shape.setPosition(pos.x - radius, pos.y - radius);
+  shape.setFillColor(color);
+  return shape;
+}
+
 
 #endif
