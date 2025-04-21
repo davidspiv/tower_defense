@@ -13,42 +13,39 @@ constexpr unsigned BOARD_COLS = 5;
 constexpr unsigned TILE_SIZE_PX = 100; // height gets halved in iso-space
 
 // LLM code, probably should just store grid-space and iso-space coords in tile
-bool point_in_shape(const sf::ConvexShape &shape, const sf::Vector2f &point) {
-  // Transform the shape points to global coordinates
+bool point_in_diamond(const sf::ConvexShape &shape, const sf::Vector2f &point) {
+  // Assumes diamond has 4 points: top, right, bottom, left
+  if (shape.getPointCount() != 4)
+    return false;
+
+  // Get transformed points
   sf::Transform transform = shape.getTransform();
-  std::vector<sf::Vector2f> points;
+  sf::Vector2f top = transform.transformPoint(shape.getPoint(0));
+  sf::Vector2f right = transform.transformPoint(shape.getPoint(1));
+  sf::Vector2f bottom = transform.transformPoint(shape.getPoint(2));
+  sf::Vector2f left = transform.transformPoint(shape.getPoint(3));
 
-  for (size_t i = 0; i < shape.getPointCount(); ++i) {
-    points.push_back(transform.transformPoint(shape.getPoint(i)));
-  }
+  // Compute center (intersection of diagonals)
+  sf::Vector2f center = {(left.x + right.x) * 0.5f, (top.y + bottom.y) * 0.5f};
 
-  // Ray-casting algorithm to determine if point is inside polygon
-  bool inside = false;
-  size_t j = points.size() - 1;
-  for (size_t i = 0; i < points.size(); ++i) {
-    const sf::Vector2f &pi = points[i];
-    const sf::Vector2f &pj = points[j];
+  // Compute width and height (distance between opposite corners)
+  float width = std::abs(right.x - left.x);
+  float height = std::abs(bottom.y - top.y);
 
-    if (((pi.y > point.y) != (pj.y > point.y)) &&
-        (point.x < (pj.x - pi.x) * (point.y - pi.y) / (pj.y - pi.y) + pi.x)) {
-      inside = !inside;
-    }
+  float dx = std::abs(point.x - center.x);
+  float dy = std::abs(point.y - center.y);
 
-    j = i;
-  }
-
-  return inside;
+  return (dx / (width * 0.5f) + dy / (height * 0.5f)) <= 1.0f;
 }
 
-
 int main() {
-  const sf::Vector2i screen_dimensions(SCREEN_WIDTH, SCREEN_HEIGHT);
-  const sf::Vector2u grid_dimensions(BOARD_ROWS, BOARD_COLS);
+  const sf::Vector2i screen_dim(SCREEN_WIDTH, SCREEN_HEIGHT);
+  const sf::Vector2u grid_dim(BOARD_ROWS, BOARD_COLS);
 
   // SETUP
   sf::RenderWindow window;
-  setup_window(window, screen_dimensions);
-  Board board(grid_dimensions, TILE_SIZE_PX, screen_dimensions);
+  setup_window(window, screen_dim);
+  Board board(grid_dim, TILE_SIZE_PX, screen_dim);
 
   std::vector<Turret> turrets;
 
@@ -80,7 +77,7 @@ int main() {
 
     // UPDATE
     for (auto &tile : board.m_tiles) {
-      if (point_in_shape(tile.m_shape, sf::Vector2f(mouse_pos))) {
+      if (point_in_diamond(tile.m_shape, sf::Vector2f(mouse_pos))) {
         tile.m_shape.setFillColor(sf::Color(100, 100, 100));
       } else {
         tile.m_shape.setFillColor(sf::Color(0, 0, 0));
@@ -91,8 +88,8 @@ int main() {
     for (auto &turret : turrets) {
       const float a = ellipse_width / 2.f;
       const float b = ellipse_height / 2.f;
-      const float x = turret.barrel_ellipse_center.x + a * std::cos(angle);
-      const float y = turret.barrel_ellipse_center.y + b * std::sin(angle);
+      const float x = turret.barrel_anchor.x + a * std::cos(angle);
+      const float y = turret.barrel_anchor.y + b * std::sin(angle);
       turret.barrel_shape.setPosition(x, y);
     }
 
@@ -103,8 +100,7 @@ int main() {
 
 
     for (auto &turret : turrets) {
-      if (turret.barrel_shape.getPosition().y >
-          turret.barrel_ellipse_center.y) {
+      if (turret.barrel_shape.getPosition().y > turret.barrel_anchor.y) {
         window.draw(turret.base_shape);
         window.draw(turret.barrel_shape);
       } else {
