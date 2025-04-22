@@ -13,6 +13,8 @@ struct Tile {
   sf::ConvexShape m_left_face;
 
   Tile(const sf::Vector2f origin, const unsigned size);
+
+  bool contains(const sf::Vector2f &screen_point, const float tile_size);
 };
 
 
@@ -28,9 +30,6 @@ struct Board {
 
   // Converts a 2D grid coordinate to a screen-centered isometric position
   sf::Vector2f iso_to_screen(const sf::Vector2f &origin) const;
-
-  bool point_in_iso_tile(const sf::Vector2f &screen_point, const Tile &tile,
-                         const float tile_size);
 
   // Fills the board with tiles and positions them in isometric layout
   void populate_tiles();
@@ -49,11 +48,12 @@ static sf::ConvexShape create_top_face(float size) {
   shape.setPoint(3, {-size, 0.f});
 
   shape.setFillColor(sf::Color(52, 95, 60));
-  shape.setOutlineThickness(2.f);
+  shape.setOutlineThickness(-2.f);
   shape.setOutlineColor(sf::Color(93, 171, 108));
 
   return shape;
 }
+
 
 static sf::ConvexShape create_right_face(float size) {
   sf::ConvexShape shape(4);
@@ -67,11 +67,12 @@ static sf::ConvexShape create_right_face(float size) {
   shape.setPoint(3, {w, z});
 
   shape.setFillColor(sf::Color(78, 46, 25));
-  shape.setOutlineThickness(2.f);
+  shape.setOutlineThickness(-2.f);
   shape.setOutlineColor(sf::Color(154, 91, 49));
 
   return shape;
 }
+
 
 static sf::ConvexShape create_left_face(float size) {
   sf::ConvexShape shape(4);
@@ -85,7 +86,7 @@ static sf::ConvexShape create_left_face(float size) {
   shape.setPoint(3, {-w, z});
 
   shape.setFillColor(sf::Color(139, 99, 64));
-  shape.setOutlineThickness(2.f);
+  shape.setOutlineThickness(-2.f);
   shape.setOutlineColor(sf::Color(215, 153, 99));
 
   return shape;
@@ -104,12 +105,24 @@ Tile::Tile(const sf::Vector2f origin, const unsigned size)
 }
 
 
+bool Tile::contains(const sf::Vector2f &screen_point, const float tile_size) {
+  const sf::Vector2f screen_pos =
+      screen_point - m_screen_pos + sf::Vector2f(0.f, tile_size / 2.f);
+
+  float x = (2.f * screen_pos.y + screen_pos.x) / 2.f;
+  float y = (2.f * screen_pos.y - screen_pos.x) / 2.f;
+
+  return (x >= 0.f && x <= tile_size && y >= 0.f && y <= tile_size);
+}
+
+
 Board::Board(sf::Vector2u grid_dim, const unsigned tile_size,
              sf::Vector2i screen_dim)
     : m_grid_dim(grid_dim), m_tile_size(tile_size),
       m_screen_dim(sf::Vector2f(screen_dim)) {
   populate_tiles();
-};
+}
+
 
 sf::Vector2f Board::to_screen_centered_pos(const sf::Vector2f &origin) const {
   float iso_board_height =
@@ -123,18 +136,6 @@ sf::Vector2f Board::to_screen_centered_pos(const sf::Vector2f &origin) const {
 
 sf::Vector2f Board::iso_to_screen(const sf::Vector2f &iso_pos) const {
   return sf::Vector2f(iso_pos.x - iso_pos.y, (iso_pos.x + iso_pos.y) / 2.f);
-}
-
-
-bool Board::point_in_iso_tile(const sf::Vector2f &screen_point,
-                              const Tile &tile, const float tile_size) {
-  const sf::Vector2f screen_pos =
-      screen_point - tile.m_screen_pos + sf::Vector2f(0.f, tile_size / 2.f);
-
-  float x = (2.f * screen_pos.y + screen_pos.x) / 2.f;
-  float y = (2.f * screen_pos.y - screen_pos.x) / 2.f;
-
-  return (x >= 0.f && x <= tile_size && y >= 0.f && y <= tile_size);
 }
 
 

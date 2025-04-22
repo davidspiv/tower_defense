@@ -65,8 +65,7 @@ int main() {
 
     // UPDATE
     for (auto &tile : board.m_tiles) {
-      if (board.point_in_iso_tile(sf::Vector2f(mouse_pos), tile,
-                                  board.m_tile_size)) {
+      if (tile.contains(sf::Vector2f(mouse_pos), board.m_tile_size)) {
         tile.m_top_face.setFillColor(sf::Color(93, 171, 108));
       } else {
         tile.m_top_face.setFillColor(sf::Color(52, 95, 60));
