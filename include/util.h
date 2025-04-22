@@ -5,6 +5,26 @@
 #include <cmath>
 
 
+class MouseThrottler {
+public:
+  MouseThrottler(sf::Time cooldown)
+      : cooldown(cooldown), lastClick(sf::Time::Zero) {}
+
+  bool canClick(sf::Clock &clock) {
+    sf::Time now = clock.getElapsedTime();
+    if (now - lastClick >= cooldown) {
+      lastClick = now;
+      return true;
+    }
+    return false;
+  }
+
+private:
+  sf::Time cooldown;
+  sf::Time lastClick;
+};
+
+
 float angle_to(const sf::Vector2f &from, const sf::Vector2f &to) {
   sf::Vector2f dir = to - from;
   return std::atan2(dir.y, dir.x);

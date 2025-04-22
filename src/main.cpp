@@ -29,7 +29,9 @@ int main() {
   sf::RenderWindow window;
   setup_window(window, SCREEN_DIM);
   Board board(GRID_DIM, TILE_SIZE_PX, SCREEN_DIM);
+
   sf::Clock clock;
+  MouseThrottler clickThrottler(sf::milliseconds(200));
 
   const sf::Vector2f spawn_pos = board.m_tiles[5].m_screen_pos;
   const sf::Vector2f tower_pos = board.m_tiles[9].m_screen_pos;
@@ -38,7 +40,7 @@ int main() {
   std::vector<Bullet> bullets;
   std::vector<Turret> turrets;
 
-  Button button;
+  Button turret_button;
 
   turrets.emplace_back(
       Turret(board.m_tiles[0].m_top_face.getPosition(), TILE_SIZE_PX));
@@ -66,12 +68,16 @@ int main() {
     }
 
     const sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+    const bool mouse_clicked = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
     // UPDATE
     update_tiles(board.m_tiles, board.m_tile_size, mouse_pos);
     update_enemies(enemies, spawn_pos, tower_pos);
     update_bullets(bullets);
     update_turrets(turrets, enemies, bullets);
+
+    static bool tower_selected = false;
+    turret_button.update(mouse_pos, mouse_clicked, tower_selected);
 
     // DRAW
     frameStart.asSeconds();
@@ -97,7 +103,7 @@ int main() {
       window.draw(bullet.shape);
     }
 
-    window.draw(button.shape);
+    window.draw(turret_button.shape);
 
     window.display();
 

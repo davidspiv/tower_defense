@@ -52,8 +52,34 @@ struct Button {
 
   Button()
       : size(100.f, 100.f), pos(100.f, 100.f),
-        shape(build_primitive_rounded_rect(pos, size, sf::Color::White)),
-        color_norm(sf::Color(100, 100, 100)), color_pressed(sf::Color::White) {}
+        shape(
+            build_primitive_rounded_rect(pos, size, sf::Color(150, 145, 124))),
+        color_norm(sf::Color(253, 245, 209)),
+        color_pressed(sf::Color(150, 145, 124)) {}
+
+
+  bool is_hovered(const sf::Vector2i &mouse_pos) const {
+    return shape.getBounds().contains(static_cast<sf::Vector2f>(mouse_pos));
+  }
+
+  void set_fill_color(const sf::Color &color) {
+    for (std::size_t i = 0; i < shape.getVertexCount(); ++i) {
+      shape[i].color = color;
+    }
+  }
+
+  void update(const sf::Vector2i &mouse_pos, bool clicked,
+              bool &tower_selected) {
+    if (!is_hovered(mouse_pos) && clicked) {
+      set_fill_color(color_norm);
+      tower_selected = false;
+    } else if (tower_selected || (is_hovered(mouse_pos) && clicked)) {
+      set_fill_color(color_pressed);
+      tower_selected = true;
+    } else {
+      set_fill_color(color_norm);
+    }
+  }
 };
 
 
