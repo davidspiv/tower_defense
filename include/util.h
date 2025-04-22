@@ -41,7 +41,7 @@ void setup_window(sf::RenderWindow &window, sf::Vector2i screen_size) {
 sf::CircleShape build_circle() {
   sf::CircleShape circle(12.f);
   circle.setFillColor(sf::Color(100, 100, 100));
-  circle.setOrigin(10.f, 10.f);
+  circle.setOrigin(circle.getRadius(), circle.getRadius());
 
   return circle;
 }
@@ -52,6 +52,7 @@ sf::CircleShape build_circle(const sf::Vector2f pos, sf::Color color,
   sf::CircleShape shape(radius);
   shape.setPosition(pos.x - radius, pos.y - radius);
   shape.setFillColor(color);
+  shape.setOrigin(shape.getRadius(), shape.getRadius());
   return shape;
 }
 

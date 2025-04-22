@@ -59,7 +59,7 @@ Turret::Turret(const sf::Vector2f tile_center, const unsigned tile_size)
 
   // move the shape so the "base" is centered around (0,0)
   for (std::size_t i = 0; i < base_shape.getVertexCount(); ++i) {
-    base_shape[i].position -= {.48f, .8f};
+    base_shape[i].position -= {.5f, .8f};
   }
 
   // place base on the desired tile center

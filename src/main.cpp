@@ -30,8 +30,8 @@ int main() {
   std::vector<Bullet> bullets;
   std::vector<Turret> turrets;
 
-  //   turrets.emplace_back(
-  //       Turret(board.m_tiles[0].m_shape.getPosition(), TILE_SIZE_PX));
+  turrets.emplace_back(
+      Turret(board.m_tiles[0].m_shape.getPosition(), TILE_SIZE_PX));
 
   //   for (auto &tile : board.m_tiles) {
   //     turrets.emplace_back(Turret(tile.m_shape.getPosition(), TILE_SIZE_PX));
