@@ -4,6 +4,7 @@ OBJ_PATH := build
 
 CXX := g++
 DEP_FLAGS := -MP -MD
+LD_FLAGS :=  -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 CXX_FLAGS := -g -Wall -std=c++17 -fpermissive $(DEP_FLAGS) $(LD_FLAGS)
 CPP_FILES := $(wildcard $(SRC_PATH)/*.cpp)
 OBJ_FILES := $(patsubst $(SRC_PATH)/%.cpp,$(OBJ_PATH)/%.o,$(CPP_FILES))
@@ -22,7 +23,7 @@ endif
 all: $(OBJ_PATH)/$(BIN)
 
 $(OBJ_PATH)/$(BIN): $(OBJ_FILES)
-	$(CXX) -o $@ $^
+	$(CXX) -o $@ $^ $(LD_FLAGS)
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cpp
 	$(MKDIR)
