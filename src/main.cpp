@@ -90,19 +90,19 @@ int main() {
       window.draw(enemy.shape);
     }
 
-    // for (auto &turret : turrets) {
-    //   if (turret.barrel_shape.getPosition().y > turret.barrel_anchor.y) {
-    //     window.draw(turret.base_shape);
-    //     window.draw(turret.barrel_shape);
-    //   } else {
-    //     window.draw(turret.barrel_shape);
-    //     window.draw(turret.base_shape);
-    //   }
-    // }
+    for (auto &turret : turrets) {
+      if (turret.barrel_shape.getPosition().y > turret.barrel_anchor.y) {
+        window.draw(turret.base_shape);
+        window.draw(turret.barrel_shape);
+      } else {
+        window.draw(turret.barrel_shape);
+        window.draw(turret.base_shape);
+      }
+    }
 
-    // for (auto &bullet : bullets) {
-    //   window.draw(bullet.shape);
-    // }
+    for (auto &bullet : bullets) {
+      window.draw(bullet.shape);
+    }
 
     window.display();
 
