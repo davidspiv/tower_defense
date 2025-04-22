@@ -28,17 +28,6 @@ struct Board {
 };
 
 
-bool Tile::contains(const sf::Vector2f &screen_point, const float tile_size) {
-  const sf::Vector2f screen_pos =
-      screen_point - m_screen_pos + sf::Vector2f(0.f, tile_size / 2.f);
-
-  float x = (2.f * screen_pos.y + screen_pos.x) / 2.f;
-  float y = (2.f * screen_pos.y - screen_pos.x) / 2.f;
-
-  return (x >= 0.f && x <= tile_size && y >= 0.f && y <= tile_size);
-}
-
-
 Board::Board(sf::Vector2u grid_dim, const unsigned tile_size,
              sf::Vector2i screen_dim)
     : m_grid_dim(grid_dim), m_tile_size(tile_size),

@@ -9,12 +9,13 @@
 struct Turret {
   sf::VertexArray base_shape;
   int fire_timer;
+  sf::Vector2f center_of_home_tile;
 
   sf::CircleShape barrel_shape;
   sf::Vector2f barrel_anchor;
-  const float barrel_rotation_speed;
-  const float barrel_ellipse_width;
-  const float barrel_ellipse_height;
+  float barrel_rotation_speed;
+  float barrel_ellipse_width;
+  float barrel_ellipse_height;
   float barrel_angle;
 
   Turret(const sf::Vector2f tile_center, const unsigned tile_size);
@@ -27,9 +28,10 @@ struct Turret {
 
 Turret::Turret(const sf::Vector2f tile_center, const unsigned tile_size)
     : base_shape(sf::TriangleFan), fire_timer(100),
-      barrel_shape(build_circle()), barrel_anchor(tile_center),
-      barrel_rotation_speed(0.05f), barrel_ellipse_width(90.f),
-      barrel_ellipse_height(45.f), barrel_angle(0.f) {
+      center_of_home_tile(tile_center), barrel_shape(build_circle()),
+      barrel_anchor(tile_center), barrel_rotation_speed(0.05f),
+      barrel_ellipse_width(90.f), barrel_ellipse_height(45.f),
+      barrel_angle(0.f) {
 
   const static std::vector<sf::Vector2f> base_shape_pts = {
       {1, 0.745007},          {0.990843, 0.797121},

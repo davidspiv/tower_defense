@@ -31,8 +31,9 @@ int main() {
   setup_window(window, SCREEN_DIM);
   Board board(GRID_DIM, TILE_SIZE_PX, SCREEN_DIM);
 
-  sf::Clock clock;
+  sf::Clock globalClock;
   MouseThrottler clickThrottler(sf::milliseconds(200));
+
 
   const sf::Vector2f spawn_pos = board.m_tiles[5].m_screen_pos;
   const sf::Vector2f tower_pos = board.m_tiles[9].m_screen_pos;
@@ -43,43 +44,27 @@ int main() {
 
   Button turret_button(SCREEN_DIM);
 
-  turrets.emplace_back(
-      Turret(board.m_tiles[0].m_top_face.getPosition(), TILE_SIZE_PX));
-
-  turrets.emplace_back(
-      Turret(board.m_tiles[12].m_top_face.getPosition(), TILE_SIZE_PX));
-
-  //   for (auto &tile : board.m_tiles) {
-  //     turrets.emplace_back(Turret(tile.m_shape.getPosition(),
-  //     TILE_SIZE_PX));
-  //   }
-
   const Tower tower(board.m_tiles[9].m_top_face.getPosition(), TILE_SIZE_PX);
 
-  //   board.m_tiles[15].m_top_face.setPosition(
-  //       board.m_tiles[15].m_top_face.getPosition() -
-  //       sf::Vector2f(0.f, 30.f));
-  //   board.m_tiles[15].m_right_face.setPosition(
-  //       board.m_tiles[15].m_right_face.getPosition() -
-  //       sf::Vector2f(0.f, 30.f));
-  //   board.m_tiles[15].m_left_face.setPosition(
-  //       board.m_tiles[15].m_left_face.getPosition() -
-  //       sf::Vector2f(0.f, 30.f));
+  // Hardcoded terrain elevation
+  board.m_tiles[15].m_top_face.setPosition(
+      board.m_tiles[15].m_top_face.getPosition() - sf::Vector2f(0.f, 30.f));
+  board.m_tiles[15].m_right_face.setPosition(
+      board.m_tiles[15].m_right_face.getPosition() - sf::Vector2f(0.f, 30.f));
+  board.m_tiles[15].m_left_face.setPosition(
+      board.m_tiles[15].m_left_face.getPosition() - sf::Vector2f(0.f, 30.f));
 
-
-  //   board.m_tiles[18].m_top_face.setPosition(
-  //       board.m_tiles[18].m_top_face.getPosition() +
-  //       sf::Vector2f(0.f, 30.f));
-  //   board.m_tiles[18].m_right_face.setPosition(
-  //       board.m_tiles[18].m_right_face.getPosition() +
-  //       sf::Vector2f(0.f, 30.f));
-  //   board.m_tiles[18].m_left_face.setPosition(
-  //       board.m_tiles[18].m_left_face.getPosition() +
-  //       sf::Vector2f(0.f, 30.f));
+  // Hardcoded terrain elevation
+  board.m_tiles[18].m_top_face.setPosition(
+      board.m_tiles[18].m_top_face.getPosition() + sf::Vector2f(0.f, 30.f));
+  board.m_tiles[18].m_right_face.setPosition(
+      board.m_tiles[18].m_right_face.getPosition() + sf::Vector2f(0.f, 30.f));
+  board.m_tiles[18].m_left_face.setPosition(
+      board.m_tiles[18].m_left_face.getPosition() + sf::Vector2f(0.f, 30.f));
 
   // GAMEPLAY LOOP
   while (window.isOpen()) {
-    sf::Time frameStart = clock.restart();
+    sf::Clock frame_clock;
 
     // INPUT
     sf::Event event;
@@ -93,23 +78,49 @@ int main() {
     }
 
     const sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
-    const bool mouse_clicked = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+    const bool mouse_clicked = sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
+                               clickThrottler.canClick(globalClock);
 
     const int hovered_tile_idx =
         get_hovered_tile_idx(board.m_tiles, board.m_tile_size, mouse_pos);
 
     // UPDATE
-    update_tiles(board.m_tiles, hovered_tile_idx);
+    update_tiles(board.m_tiles);
     update_enemies(enemies, spawn_pos, tower_pos);
     update_bullets(bullets);
     update_turrets(turrets, enemies, bullets);
 
 
     static bool tower_selected = false;
+
+
+    if (hovered_tile_idx >= 0) {
+      Tile &tile = board.m_tiles[hovered_tile_idx];
+
+      if (tower_selected) {
+        if (tile.m_role == EMPTY && mouse_clicked) {
+          turrets.emplace_back(
+              Turret(tile.m_top_face.getPosition(), board.m_tile_size));
+          tile.m_role = TURRET;
+        }
+
+        if (tile.contains(sf::Vector2f(mouse_pos), board.m_tile_size)) {
+          tile.m_top_face.setFillColor(sf::Color(93, 171, 108));
+        }
+      } else if (tile.m_role == TURRET && mouse_clicked) {
+        for (size_t i = 0; i < turrets.size(); i++) {
+          if (turrets[i].center_of_home_tile == tile.m_top_face.getPosition()) {
+            turrets.erase(turrets.begin() + i);
+            tile.m_role = EMPTY;
+            break; // Only remove one
+          }
+        }
+      }
+    }
+
     turret_button.update(mouse_pos, mouse_clicked, tower_selected);
 
     // DRAW
-    frameStart.asSeconds();
     window.clear(sf::Color(19, 19, 19));
 
     board.draw(window);
@@ -137,7 +148,7 @@ int main() {
     window.draw(tower.shape);
 
     window.display();
-    sf::Time frameEnd = clock.getElapsedTime();
+    sf::Time frameEnd = frame_clock.getElapsedTime();
     if (frameEnd < FRAME_DURATION) {
       sf::sleep(FRAME_DURATION - frameEnd);
     }

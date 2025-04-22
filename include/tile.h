@@ -5,12 +5,16 @@
 #include <SFML/Graphics.hpp>
 
 
+enum Tile_Role { EMPTY, TURRET, TOWER };
+
+
 struct Tile {
   sf::Vector2f m_origin;
   sf::Vector2f m_screen_pos;
   sf::ConvexShape m_top_face;
   sf::ConvexShape m_right_face;
   sf::ConvexShape m_left_face;
+  Tile_Role m_role;
 
   Tile(const sf::Vector2f origin, const unsigned size);
 
@@ -74,7 +78,8 @@ static sf::ConvexShape create_left_face(float size) {
 
 Tile::Tile(const sf::Vector2f origin, const unsigned size)
     : m_origin(origin), m_top_face(sf::ConvexShape(4)),
-      m_right_face(sf::ConvexShape(4)), m_left_face(sf::ConvexShape(4)) {
+      m_right_face(sf::ConvexShape(4)), m_left_face(sf::ConvexShape(4)),
+      m_role(EMPTY) {
 
   float size_f = static_cast<float>(size);
 
@@ -82,6 +87,18 @@ Tile::Tile(const sf::Vector2f origin, const unsigned size)
   m_right_face = create_right_face(size_f);
   m_left_face = create_left_face(size_f);
 }
+
+
+bool Tile::contains(const sf::Vector2f &screen_point, const float tile_size) {
+  const sf::Vector2f screen_pos =
+      screen_point - m_screen_pos + sf::Vector2f(0.f, tile_size / 2.f);
+
+  float x = (2.f * screen_pos.y + screen_pos.x) / 2.f;
+  float y = (2.f * screen_pos.y - screen_pos.x) / 2.f;
+
+  return (x >= 0.f && x <= tile_size && y >= 0.f && y <= tile_size);
+}
+
 
 int get_hovered_tile_idx(std::vector<Tile> &tiles, const float tile_size,
                          const sf::Vector2i mouse_pos) {
@@ -95,12 +112,10 @@ int get_hovered_tile_idx(std::vector<Tile> &tiles, const float tile_size,
 }
 
 
-void update_tiles(std::vector<Tile> &tiles, const float hovered_tile_idx) {
+void update_tiles(std::vector<Tile> &tiles) {
   for (auto &tile : tiles) {
     tile.m_top_face.setFillColor(sf::Color(52, 95, 60));
   }
-
-  tiles[hovered_tile_idx].m_top_face.setFillColor(sf::Color(93, 171, 108));
 }
 
 #endif

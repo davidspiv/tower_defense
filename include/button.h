@@ -32,6 +32,7 @@ struct Button {
       shape[i].color = color;
     }
   }
+  
 
   void update(const sf::Vector2i &mouse_pos, bool clicked,
               bool &tower_selected) {
