@@ -9,6 +9,8 @@ struct Tile {
   sf::Vector2f m_origin;
   sf::Vector2f m_screen_pos;
   sf::ConvexShape m_shape;
+  sf::ConvexShape m_left;
+  sf::ConvexShape m_right;
 
   Tile(const sf::Vector2f origin, const unsigned size);
 };
@@ -39,18 +41,44 @@ struct Board {
 
 
 Tile::Tile(const sf::Vector2f origin, const unsigned size)
-    : m_origin(origin), m_shape(sf::ConvexShape(4)) {
+    : m_origin(origin), m_shape(sf::ConvexShape(4)), m_left(sf::ConvexShape(4)),
+      m_right(sf::ConvexShape(4)) {
 
   const float size_f = static_cast<float>(size);
 
+  // Top face (diamond)
   m_shape.setPoint(0, sf::Vector2f(0.f, -size_f / 2.f));
   m_shape.setPoint(1, sf::Vector2f(size_f, 0.f));
   m_shape.setPoint(2, sf::Vector2f(0.f, size_f / 2.f));
   m_shape.setPoint(3, sf::Vector2f(-size_f, 0.f));
-
-  m_shape.setFillColor(sf::Color(0, 0, 0));
+  m_shape.setFillColor(sf::Color(200, 200, 200));
   m_shape.setOutlineThickness(2.f);
-  m_shape.setOutlineColor(sf::Color(250, 150, 100));
+  m_shape.setOutlineColor(sf::Color::Black);
+  m_shape.setPosition(m_origin);
+
+  // Left face
+  m_left.setPoint(0, m_shape.getPoint(3)); // top-left of top face
+  m_left.setPoint(1, m_shape.getPoint(2)); // bottom of top face
+  m_left.setPoint(2, m_shape.getPoint(2) +
+                         sf::Vector2f(-size_f, size_f)); // shifted down-left
+  m_left.setPoint(3, m_shape.getPoint(3) +
+                         sf::Vector2f(-size_f, size_f)); // shifted down-left
+  m_left.setFillColor(sf::Color(150, 150, 150));
+  m_left.setOutlineThickness(2.f);
+  m_left.setOutlineColor(sf::Color::Black);
+  m_left.setPosition(m_origin);
+
+  // Right face
+  m_right.setPoint(0, m_shape.getPoint(1)); // top-right of top face
+  m_right.setPoint(1, m_shape.getPoint(2)); // bottom of top face
+  m_right.setPoint(2, m_shape.getPoint(2) +
+                          sf::Vector2f(size_f, size_f)); // shifted down-right
+  m_right.setPoint(3, m_shape.getPoint(1) +
+                          sf::Vector2f(size_f, size_f)); // shifted down-right
+  m_right.setFillColor(sf::Color(100, 100, 100));
+  m_right.setOutlineThickness(2.f);
+  m_right.setOutlineColor(sf::Color::Black);
+  m_right.setPosition(m_origin);
 }
 
 
@@ -110,6 +138,8 @@ void Board::populate_tiles() {
 void Board::draw(sf::RenderWindow &window) {
   for (auto &tile : m_tiles) {
     window.draw(tile.m_shape);
+    window.draw(tile.m_left);
+    window.draw(tile.m_right);
   }
 }
 
