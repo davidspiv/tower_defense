@@ -12,7 +12,7 @@ float angle_to(const sf::Vector2f &from, const sf::Vector2f &to) {
 
 
 float shortest_angle_delta(float from, float to) {
-  return std::fmod(to - from + 540.f, 360.f) - 180.f;
+  return std::fmod(to - from + 3.f * M_PI, 2.f * M_PI) - M_PI;
 }
 
 
