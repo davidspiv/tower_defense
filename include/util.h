@@ -5,9 +5,6 @@
 #include <cmath>
 
 
-float to_degrees(const float radians) { return radians * (180.0 / M_PI); }
-
-
 float angle_to(const sf::Vector2f &from, const sf::Vector2f &to) {
   sf::Vector2f dir = to - from;
   return std::atan2(dir.y, dir.x);
