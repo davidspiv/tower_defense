@@ -40,7 +40,7 @@ int main() {
   std::vector<Bullet> bullets;
   std::vector<Turret> turrets;
 
-  Button turret_button;
+  Button turret_button(SCREEN_DIM);
 
   turrets.emplace_back(
       Turret(board.m_tiles[0].m_top_face.getPosition(), TILE_SIZE_PX));
