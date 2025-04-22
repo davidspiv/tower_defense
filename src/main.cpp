@@ -67,9 +67,9 @@ int main() {
     for (auto &tile : board.m_tiles) {
       if (board.point_in_iso_tile(sf::Vector2f(mouse_pos), tile,
                                   board.m_tile_size)) {
-        tile.m_shape.setFillColor(sf::Color(100, 100, 100));
+        tile.m_shape.setFillColor(sf::Color(93, 171, 108));
       } else {
-        tile.m_shape.setFillColor(sf::Color(0, 0, 0));
+        tile.m_shape.setFillColor(sf::Color(52, 95, 60));
       }
     }
 

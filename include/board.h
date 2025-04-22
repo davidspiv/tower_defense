@@ -40,44 +40,67 @@ struct Board {
 };
 
 
+static sf::ConvexShape createDiamond(float size) {
+  sf::ConvexShape shape(4);
+  float half = size / 2.f;
+  shape.setPoint(0, {0.f, -half});
+  shape.setPoint(1, {size, 0.f});
+  shape.setPoint(2, {0.f, half});
+  shape.setPoint(3, {-size, 0.f});
+
+  shape.setFillColor(sf::Color(52, 95, 60));
+  shape.setOutlineThickness(2.f);
+  shape.setOutlineColor(sf::Color(93, 171, 108));
+
+  return shape;
+}
+
+static sf::ConvexShape createRightSide(float size) {
+  sf::ConvexShape shape(4);
+  float w = size;
+  float h = size / 2.f;
+  float z = size;
+
+  shape.setPoint(0, {w, 0.f});
+  shape.setPoint(1, {0.f, h});
+  shape.setPoint(2, {0.f, h + z});
+  shape.setPoint(3, {w, z});
+
+  shape.setFillColor(sf::Color(78, 46, 25));
+  shape.setOutlineThickness(2.f);
+  shape.setOutlineColor(sf::Color(154, 91, 49));
+
+  return shape;
+}
+
+static sf::ConvexShape createLeftSide(float size) {
+  sf::ConvexShape shape(4);
+  float w = size;
+  float h = size / 2.f;
+  float z = size;
+
+  shape.setPoint(0, {-w, 0.f});
+  shape.setPoint(1, {0.f, h});
+  shape.setPoint(2, {0.f, h + z});
+  shape.setPoint(3, {-w, z});
+
+  shape.setFillColor(sf::Color(139, 99, 64));
+  shape.setOutlineThickness(2.f);
+  shape.setOutlineColor(sf::Color(215, 153, 99));
+
+  return shape;
+}
+
+
 Tile::Tile(const sf::Vector2f origin, const unsigned size)
     : m_origin(origin), m_shape(sf::ConvexShape(4)),
       m_right(sf::ConvexShape(4)), m_left(sf::ConvexShape(4)) {
 
   float size_f = static_cast<float>(size);
 
-  float w = size_f;
-  float h = size_f / 2.f;
-  float z = size_f; // height of the cube
-
-  m_shape.setPoint(0, sf::Vector2f(0.f, -size_f / 2.f));
-  m_shape.setPoint(1, sf::Vector2f(size_f, 0.f));
-  m_shape.setPoint(2, sf::Vector2f(0.f, size_f / 2.f));
-  m_shape.setPoint(3, sf::Vector2f(-size_f, 0.f));
-
-  m_shape.setFillColor(sf::Color(0, 0, 0));
-  m_shape.setOutlineThickness(2.f);
-  m_shape.setOutlineColor(sf::Color(250, 150, 100));
-
-
-  m_left.setPoint(0, sf::Vector2f(-w, 0.f));
-  m_left.setPoint(1, sf::Vector2f(0.f, h));
-  m_left.setPoint(2, sf::Vector2f(0.f, h + z));
-  m_left.setPoint(3, sf::Vector2f(-w, z));
-
-  m_left.setFillColor(sf::Color(0, 0, 0));
-  m_left.setOutlineThickness(2.f);
-  m_left.setOutlineColor(sf::Color(250, 150, 100));
-
-
-  m_right.setPoint(0, sf::Vector2f(w, 0.f));
-  m_right.setPoint(1, sf::Vector2f(0.f, h));
-  m_right.setPoint(2, sf::Vector2f(0.f, h + z));
-  m_right.setPoint(3, sf::Vector2f(w, z));
-
-  m_right.setFillColor(sf::Color(0, 0, 0));
-  m_right.setOutlineThickness(2.f);
-  m_right.setOutlineColor(sf::Color(250, 150, 100));
+  m_shape = createDiamond(size_f);
+  m_right = createRightSide(size_f);
+  m_left = createLeftSide(size_f);
 }
 
 
