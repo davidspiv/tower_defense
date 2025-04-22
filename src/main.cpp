@@ -65,7 +65,7 @@ int main() {
     update_enemies(enemies, spawn_pos, tower_pos);
 
     for (auto &turret : turrets) {
-      turret.update();
+      turret.update(enemies);
     }
 
     // DRAW

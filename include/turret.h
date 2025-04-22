@@ -7,6 +7,7 @@
 
 struct Turret {
   sf::VertexArray base_shape;
+  const sf::Vector2f origin;
   const float rotation_speed;
   const int fire_timer;
 
@@ -18,15 +19,17 @@ struct Turret {
 
   Turret(const sf::Vector2f tile_center, const unsigned tile_size);
 
+  void update(const std::vector<Enemy> &enemies);
+
   void update();
 };
 
 
 Turret::Turret(const sf::Vector2f tile_center, const unsigned tile_size)
-    : base_shape(sf::TriangleFan), rotation_speed(0.5f), fire_timer(500),
-      barrel_shape(build_circle()), barrel_anchor(tile_center),
+    : base_shape(sf::TriangleFan), origin(tile_center), rotation_speed(0.5f),
+      fire_timer(500), barrel_shape(build_circle()), barrel_anchor(tile_center),
       barrel_ellipse_width(90.f), barrel_ellipse_height(45.f),
-      barrel_angle(90.f) {
+      barrel_angle(0.f) {
 
   const static std::vector<sf::Vector2f> base_shape_pts = {
       {1, 0.74771},           {0.990843, 0.800013},   {0.964488, 0.846115},
@@ -79,15 +82,21 @@ Turret::Turret(const sf::Vector2f tile_center, const unsigned tile_size)
 }
 
 
-void Turret::update() {
-  barrel_angle += .005;
+void Turret::update(const std::vector<Enemy> &enemies) {
 
   const float a = barrel_ellipse_width / 2.f;
   const float b = barrel_ellipse_height / 2.f;
-  const float x = barrel_anchor.x + a * std::cos(barrel_angle);
-  const float y = barrel_anchor.y + b * std::sin(barrel_angle);
+
+  float angle_rad = angle_to(barrel_anchor, enemies[0].shape.getPosition());
+
+  // Convert visual angle to parametric ellipse angle
+  float t = std::atan2(a * std::sin(angle_rad), b * std::cos(angle_rad));
+
+  // Parametric ellipse position
+  const float x = barrel_anchor.x + a * std::cos(t);
+  const float y = barrel_anchor.y + b * std::sin(t);
+
   barrel_shape.setPosition(x, y);
 }
-
 
 #endif
