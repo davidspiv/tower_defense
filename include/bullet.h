@@ -19,8 +19,9 @@ struct Bullet {
 
   void update(float dist) {
     sf::Vector2f dir = target->shape.getPosition() - pos;
-    if (dist != 0)
+    if (dist != 0) {
       dir /= dist;
+    }
 
     pos += dir * speed;
     shape.setPosition(pos);
