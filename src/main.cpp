@@ -52,6 +52,21 @@ int main() {
 
   const Tower tower(board.m_tiles[9].m_top_face.getPosition(), TILE_SIZE_PX);
 
+  board.m_tiles[15].m_top_face.setPosition(
+      board.m_tiles[15].m_top_face.getPosition() - sf::Vector2f(0.f, 30.f));
+  board.m_tiles[15].m_right_face.setPosition(
+      board.m_tiles[15].m_right_face.getPosition() - sf::Vector2f(0.f, 30.f));
+  board.m_tiles[15].m_left_face.setPosition(
+      board.m_tiles[15].m_left_face.getPosition() - sf::Vector2f(0.f, 30.f));
+
+
+  board.m_tiles[18].m_top_face.setPosition(
+      board.m_tiles[18].m_top_face.getPosition() + sf::Vector2f(0.f, 30.f));
+  board.m_tiles[18].m_right_face.setPosition(
+      board.m_tiles[18].m_right_face.getPosition() + sf::Vector2f(0.f, 30.f));
+  board.m_tiles[18].m_left_face.setPosition(
+      board.m_tiles[18].m_left_face.getPosition() + sf::Vector2f(0.f, 30.f));
+
   //   for (auto &tile : board.m_tiles) {
   //     turrets.emplace_back(Turret(tile.m_shape.getPosition(),
   //     TILE_SIZE_PX));
