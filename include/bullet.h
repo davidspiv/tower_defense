@@ -14,7 +14,7 @@ struct Bullet {
   sf::CircleShape shape;
 
   Bullet(sf::Vector2f tile_center, Enemy *target)
-      : pos(tile_center), speed(2.f), radius(4.f), target(target),
+      : pos(tile_center), speed(18.f), radius(4.f), target(target),
         shape(build_circle(pos, sf::Color(255, 0, 0), radius)) {}
 
   void update(float dist) {

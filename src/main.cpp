@@ -5,7 +5,9 @@
 #include "../include/util.h"
 
 #include <SFML/Graphics.hpp>
+#include <chrono>
 #include <cmath>
+#include <thread> // For std::this_thread::sleep_for
 #include <vector>
 
 constexpr int SCREEN_WIDTH = 1920;
@@ -15,13 +17,17 @@ constexpr unsigned BOARD_COLS = 5;
 constexpr unsigned TILE_SIZE_PX = 100;
 
 int main() {
-  const sf::Vector2i screen_dim(SCREEN_WIDTH, SCREEN_HEIGHT);
-  const sf::Vector2u grid_dim(BOARD_ROWS, BOARD_COLS);
+  const sf::Vector2i SCREEN_DIM(SCREEN_WIDTH, SCREEN_HEIGHT);
+  const sf::Vector2u GRID_DIM(BOARD_ROWS, BOARD_COLS);
+
+  const int TARGET_FPS = 60;
+  const sf::Time FRAME_DURATION = sf::seconds(1.0f / TARGET_FPS);
 
   // SETUP
   sf::RenderWindow window;
-  setup_window(window, screen_dim);
-  Board board(grid_dim, TILE_SIZE_PX, screen_dim);
+  setup_window(window, SCREEN_DIM);
+  Board board(GRID_DIM, TILE_SIZE_PX, SCREEN_DIM);
+  sf::Clock clock;
 
   const sf::Vector2f spawn_pos = board.m_tiles[5].m_screen_pos;
   const sf::Vector2f tower_pos = board.m_tiles[9].m_screen_pos;
@@ -42,6 +48,8 @@ int main() {
 
   // GAMEPLAY LOOP
   while (window.isOpen()) {
+    sf::Time frameStart = clock.restart();
+
     // INPUT
     sf::Event event;
     while (window.pollEvent(event)) {
@@ -74,6 +82,7 @@ int main() {
     update_bullets(bullets);
 
     // DRAW
+    frameStart.asSeconds();
     window.clear();
     board.draw(window);
 
@@ -96,5 +105,10 @@ int main() {
     }
 
     window.display();
+
+    sf::Time frameEnd = clock.getElapsedTime();
+    if (frameEnd < FRAME_DURATION) {
+      sf::sleep(FRAME_DURATION - frameEnd);
+    }
   }
 }
