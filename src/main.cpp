@@ -23,8 +23,8 @@ int main() {
   setup_window(window, screen_dim);
   Board board(grid_dim, TILE_SIZE_PX, screen_dim);
 
-  const sf::Vector2f spawn_pos = board.m_tiles[0].m_screen_pos;
-  const sf::Vector2f tower_pos = board.m_tiles[8].m_screen_pos;
+  const sf::Vector2f spawn_pos = board.m_tiles[5].m_screen_pos;
+  const sf::Vector2f tower_pos = board.m_tiles[9].m_screen_pos;
 
   std::vector<Enemy> enemies;
   std::vector<Bullet> bullets;
