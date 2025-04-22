@@ -3,6 +3,7 @@
 #include "../include/button.h"
 #include "../include/enemy.h"
 #include "../include/tile.h"
+#include "../include/tower.h"
 #include "../include/turret.h"
 #include "../include/util.h"
 
@@ -48,8 +49,12 @@ int main() {
   turrets.emplace_back(
       Turret(board.m_tiles[12].m_top_face.getPosition(), TILE_SIZE_PX));
 
+
+  const Tower tower(board.m_tiles[9].m_top_face.getPosition(), TILE_SIZE_PX);
+
   //   for (auto &tile : board.m_tiles) {
-  //     turrets.emplace_back(Turret(tile.m_shape.getPosition(), TILE_SIZE_PX));
+  //     turrets.emplace_back(Turret(tile.m_shape.getPosition(),
+  //     TILE_SIZE_PX));
   //   }
 
   // GAMEPLAY LOOP
@@ -105,9 +110,9 @@ int main() {
 
     window.draw(turret_button.shape);
 
+    window.draw(tower.shape);
+
     window.display();
-
-
     sf::Time frameEnd = clock.getElapsedTime();
     if (frameEnd < FRAME_DURATION) {
       sf::sleep(FRAME_DURATION - frameEnd);
