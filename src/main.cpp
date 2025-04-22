@@ -37,10 +37,10 @@ int main() {
   std::vector<Turret> turrets;
 
   turrets.emplace_back(
-      Turret(board.m_tiles[0].m_shape.getPosition(), TILE_SIZE_PX));
+      Turret(board.m_tiles[0].m_top_face.getPosition(), TILE_SIZE_PX));
 
   turrets.emplace_back(
-      Turret(board.m_tiles[12].m_shape.getPosition(), TILE_SIZE_PX));
+      Turret(board.m_tiles[12].m_top_face.getPosition(), TILE_SIZE_PX));
 
   //   for (auto &tile : board.m_tiles) {
   //     turrets.emplace_back(Turret(tile.m_shape.getPosition(), TILE_SIZE_PX));
@@ -67,9 +67,9 @@ int main() {
     for (auto &tile : board.m_tiles) {
       if (board.point_in_iso_tile(sf::Vector2f(mouse_pos), tile,
                                   board.m_tile_size)) {
-        tile.m_shape.setFillColor(sf::Color(93, 171, 108));
+        tile.m_top_face.setFillColor(sf::Color(93, 171, 108));
       } else {
-        tile.m_shape.setFillColor(sf::Color(52, 95, 60));
+        tile.m_top_face.setFillColor(sf::Color(52, 95, 60));
       }
     }
 
@@ -83,7 +83,7 @@ int main() {
 
     // DRAW
     frameStart.asSeconds();
-    window.clear();
+    window.clear(sf::Color(19, 19, 19));
     board.draw(window);
 
     for (auto &enemy : enemies) {

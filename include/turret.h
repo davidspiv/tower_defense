@@ -58,7 +58,7 @@ Turret::Turret(const sf::Vector2f tile_center, const unsigned tile_size)
 
   // HANDLE TURRET BASE
   for (const auto &pt : base_shape_pts) {
-    base_shape.append(sf::Vertex(pt, sf::Color(200, 200, 200)));
+    base_shape.append(sf::Vertex(pt, sf::Color(203, 186, 158)));
   }
 
   // move the shape so the "base" is centered around (0,0)

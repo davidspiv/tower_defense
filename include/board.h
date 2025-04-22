@@ -8,9 +8,9 @@
 struct Tile {
   sf::Vector2f m_origin;
   sf::Vector2f m_screen_pos;
-  sf::ConvexShape m_shape;
-  sf::ConvexShape m_right;
-  sf::ConvexShape m_left;
+  sf::ConvexShape m_top_face;
+  sf::ConvexShape m_right_face;
+  sf::ConvexShape m_left_face;
 
   Tile(const sf::Vector2f origin, const unsigned size);
 };
@@ -40,7 +40,7 @@ struct Board {
 };
 
 
-static sf::ConvexShape createDiamond(float size) {
+static sf::ConvexShape create_top_face(float size) {
   sf::ConvexShape shape(4);
   float half = size / 2.f;
   shape.setPoint(0, {0.f, -half});
@@ -55,7 +55,7 @@ static sf::ConvexShape createDiamond(float size) {
   return shape;
 }
 
-static sf::ConvexShape createRightSide(float size) {
+static sf::ConvexShape create_right_face(float size) {
   sf::ConvexShape shape(4);
   float w = size;
   float h = size / 2.f;
@@ -73,7 +73,7 @@ static sf::ConvexShape createRightSide(float size) {
   return shape;
 }
 
-static sf::ConvexShape createLeftSide(float size) {
+static sf::ConvexShape create_left_face(float size) {
   sf::ConvexShape shape(4);
   float w = size;
   float h = size / 2.f;
@@ -93,14 +93,14 @@ static sf::ConvexShape createLeftSide(float size) {
 
 
 Tile::Tile(const sf::Vector2f origin, const unsigned size)
-    : m_origin(origin), m_shape(sf::ConvexShape(4)),
-      m_right(sf::ConvexShape(4)), m_left(sf::ConvexShape(4)) {
+    : m_origin(origin), m_top_face(sf::ConvexShape(4)),
+      m_right_face(sf::ConvexShape(4)), m_left_face(sf::ConvexShape(4)) {
 
   float size_f = static_cast<float>(size);
 
-  m_shape = createDiamond(size_f);
-  m_right = createRightSide(size_f);
-  m_left = createLeftSide(size_f);
+  m_top_face = create_top_face(size_f);
+  m_right_face = create_right_face(size_f);
+  m_left_face = create_left_face(size_f);
 }
 
 
@@ -149,9 +149,9 @@ void Board::populate_tiles() {
 
       const sf::Vector2f tile_pos = iso_to_screen(tile.m_origin);
       tile.m_screen_pos = to_screen_centered_pos(tile_pos);
-      tile.m_shape.setPosition(tile.m_screen_pos);
-      tile.m_right.setPosition(tile.m_screen_pos);
-      tile.m_left.setPosition(tile.m_screen_pos);
+      tile.m_top_face.setPosition(tile.m_screen_pos);
+      tile.m_right_face.setPosition(tile.m_screen_pos);
+      tile.m_left_face.setPosition(tile.m_screen_pos);
 
       m_tiles.emplace_back(std::move(tile));
     }
@@ -161,9 +161,9 @@ void Board::populate_tiles() {
 
 void Board::draw(sf::RenderWindow &window) {
   for (auto &tile : m_tiles) {
-    window.draw(tile.m_shape);
-    window.draw(tile.m_right);
-    window.draw(tile.m_left);
+    window.draw(tile.m_top_face);
+    window.draw(tile.m_right_face);
+    window.draw(tile.m_left_face);
   }
 }
 

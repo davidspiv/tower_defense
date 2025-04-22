@@ -15,7 +15,7 @@ struct Bullet {
 
   Bullet(sf::Vector2f tile_center, Enemy *target)
       : pos(tile_center), speed(18.f), radius(4.f), target(target),
-        shape(build_circle(pos, sf::Color(255, 0, 0), radius)) {}
+        shape(build_circle(pos, sf::Color(49, 45, 38), radius)) {}
 
   void update(float dist) {
     sf::Vector2f dir = target->shape.getPosition() - pos;
