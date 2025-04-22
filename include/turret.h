@@ -94,7 +94,9 @@ void Turret::update(std::vector<Enemy> &enemies, std::vector<Bullet> &bullets) {
 
   // Normalize angle difference to range [-PI, PI]
   const float desired_delta =
-      std::fmod(desired_angle - barrel_angle + 3.f * M_PI, 2.f * M_PI) - M_PI;
+      std::abs(shortest_angle_delta(barrel_angle, desired_angle)) - M_PI;
+
+  std::fmod(desired_angle - barrel_angle + 3.f * M_PI, 2.f * M_PI);
 
   // Clamp rotation speed
   const float frame_delta =
