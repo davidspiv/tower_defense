@@ -33,6 +33,9 @@ int main() {
   turrets.emplace_back(
       Turret(board.m_tiles[0].m_shape.getPosition(), TILE_SIZE_PX));
 
+  turrets.emplace_back(
+      Turret(board.m_tiles[12].m_shape.getPosition(), TILE_SIZE_PX));
+
   //   for (auto &tile : board.m_tiles) {
   //     turrets.emplace_back(Turret(tile.m_shape.getPosition(), TILE_SIZE_PX));
   //   }
@@ -65,8 +68,10 @@ int main() {
     update_enemies(enemies, spawn_pos, tower_pos);
 
     for (auto &turret : turrets) {
-      turret.update(enemies);
+      turret.update(enemies, bullets);
     }
+
+    update_bullets(bullets);
 
     // DRAW
     window.clear();
@@ -84,6 +89,10 @@ int main() {
         window.draw(turret.barrel_shape);
         window.draw(turret.base_shape);
       }
+    }
+
+    for (auto &bullet : bullets) {
+      window.draw(bullet.shape);
     }
 
     window.display();

@@ -1,6 +1,7 @@
 #ifndef TURRET_H
 #define TURRET_H
 
+#include "../include/bullet.h"
 #include "../include/util.h"
 
 #include <SFML/Graphics.hpp>
@@ -8,7 +9,7 @@
 struct Turret {
   sf::VertexArray base_shape;
   const sf::Vector2f origin;
-  const int fire_timer;
+  int fire_timer;
 
   sf::CircleShape barrel_shape;
   sf::Vector2f barrel_anchor;
@@ -19,7 +20,7 @@ struct Turret {
 
   Turret(const sf::Vector2f tile_center, const unsigned tile_size);
 
-  void update(const std::vector<Enemy> &enemies);
+  void update(std::vector<Enemy> &enemies, std::vector<Bullet> &bullets);
 
   void update();
 };
@@ -82,7 +83,7 @@ Turret::Turret(const sf::Vector2f tile_center, const unsigned tile_size)
 }
 
 
-void Turret::update(const std::vector<Enemy> &enemies) {
+void Turret::update(std::vector<Enemy> &enemies, std::vector<Bullet> &bullets) {
 
   const float a = barrel_ellipse_width / 2.f;
   const float b = barrel_ellipse_height / 2.f;
@@ -109,6 +110,17 @@ void Turret::update(const std::vector<Enemy> &enemies) {
   const float y = barrel_anchor.y + b * std::sin(t);
 
   barrel_shape.setPosition(x, y);
+
+  // Fire logic
+  fire_timer -= 1;
+
+  const float angle_diff =
+      std::abs(shortest_angle_delta(barrel_angle, desired_angle));
+
+  if (fire_timer <= 0 && angle_diff <= 0.1f) {
+    bullets.emplace_back(Bullet(barrel_shape.getPosition(), &enemies[0]));
+    fire_timer = 500;
+  }
 }
 
 #endif

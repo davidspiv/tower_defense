@@ -32,7 +32,7 @@ public:
 
 Enemy::Enemy(const sf::Vector2f spawn_pos, const sf::Vector2f tower_pos)
     : shape(build_circle(spawn_pos, sf::Color(200, 200, 200), 20.f)),
-      speed(.3f), health(100), spawn_pos(spawn_pos), tower_pos(tower_pos) {}
+      speed(.08f), health(100), spawn_pos(spawn_pos), tower_pos(tower_pos) {}
 
 
 void update_enemies(std::vector<Enemy> &enemies, const sf::Vector2f spawn_pos,
