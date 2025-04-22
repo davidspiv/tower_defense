@@ -1,5 +1,6 @@
 #include "../include/board.h"
 #include "../include/bullet.h"
+#include "../include/button.h"
 #include "../include/enemy.h"
 #include "../include/tile.h"
 #include "../include/turret.h"
@@ -37,6 +38,8 @@ int main() {
   std::vector<Bullet> bullets;
   std::vector<Turret> turrets;
 
+  Button button;
+
   turrets.emplace_back(
       Turret(board.m_tiles[0].m_top_face.getPosition(), TILE_SIZE_PX));
 
@@ -73,6 +76,7 @@ int main() {
     // DRAW
     frameStart.asSeconds();
     window.clear(sf::Color(19, 19, 19));
+
     board.draw(window);
 
     for (auto &enemy : enemies) {
@@ -93,7 +97,10 @@ int main() {
       window.draw(bullet.shape);
     }
 
+    window.draw(button.shape);
+
     window.display();
+
 
     sf::Time frameEnd = clock.getElapsedTime();
     if (frameEnd < FRAME_DURATION) {

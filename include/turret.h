@@ -8,7 +8,6 @@
 
 struct Turret {
   sf::VertexArray base_shape;
-  const sf::Vector2f origin;
   int fire_timer;
 
   sf::CircleShape barrel_shape;
@@ -27,7 +26,7 @@ struct Turret {
 
 
 Turret::Turret(const sf::Vector2f tile_center, const unsigned tile_size)
-    : base_shape(sf::TriangleFan), origin(tile_center), fire_timer(100),
+    : base_shape(sf::TriangleFan), fire_timer(100),
       barrel_shape(build_circle()), barrel_anchor(tile_center),
       barrel_rotation_speed(0.05f), barrel_ellipse_width(90.f),
       barrel_ellipse_height(45.f), barrel_angle(0.f) {
