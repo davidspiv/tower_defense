@@ -83,16 +83,24 @@ Tile::Tile(const sf::Vector2f origin, const unsigned size)
   m_left_face = create_left_face(size_f);
 }
 
-
-void update_tiles(std::vector<Tile> &tiles, const float tile_size,
-                  const sf::Vector2i mouse_pos) {
-  for (auto &tile : tiles) {
-    if (tile.contains(sf::Vector2f(mouse_pos), tile_size)) {
-      tile.m_top_face.setFillColor(sf::Color(93, 171, 108));
-    } else {
-      tile.m_top_face.setFillColor(sf::Color(52, 95, 60));
+int get_hovered_tile_idx(std::vector<Tile> &tiles, const float tile_size,
+                         const sf::Vector2i mouse_pos) {
+  for (size_t i = 0; i < tiles.size(); i++) {
+    if (tiles[i].contains(sf::Vector2f(mouse_pos), tile_size)) {
+      return i;
     }
   }
+
+  return -1;
+}
+
+
+void update_tiles(std::vector<Tile> &tiles, const float hovered_tile_idx) {
+  for (auto &tile : tiles) {
+    tile.m_top_face.setFillColor(sf::Color(52, 95, 60));
+  }
+
+  tiles[hovered_tile_idx].m_top_face.setFillColor(sf::Color(93, 171, 108));
 }
 
 #endif

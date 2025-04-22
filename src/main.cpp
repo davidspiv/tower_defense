@@ -49,28 +49,33 @@ int main() {
   turrets.emplace_back(
       Turret(board.m_tiles[12].m_top_face.getPosition(), TILE_SIZE_PX));
 
-
-  const Tower tower(board.m_tiles[9].m_top_face.getPosition(), TILE_SIZE_PX);
-
-  board.m_tiles[15].m_top_face.setPosition(
-      board.m_tiles[15].m_top_face.getPosition() - sf::Vector2f(0.f, 30.f));
-  board.m_tiles[15].m_right_face.setPosition(
-      board.m_tiles[15].m_right_face.getPosition() - sf::Vector2f(0.f, 30.f));
-  board.m_tiles[15].m_left_face.setPosition(
-      board.m_tiles[15].m_left_face.getPosition() - sf::Vector2f(0.f, 30.f));
-
-
-  board.m_tiles[18].m_top_face.setPosition(
-      board.m_tiles[18].m_top_face.getPosition() + sf::Vector2f(0.f, 30.f));
-  board.m_tiles[18].m_right_face.setPosition(
-      board.m_tiles[18].m_right_face.getPosition() + sf::Vector2f(0.f, 30.f));
-  board.m_tiles[18].m_left_face.setPosition(
-      board.m_tiles[18].m_left_face.getPosition() + sf::Vector2f(0.f, 30.f));
-
   //   for (auto &tile : board.m_tiles) {
   //     turrets.emplace_back(Turret(tile.m_shape.getPosition(),
   //     TILE_SIZE_PX));
   //   }
+
+  const Tower tower(board.m_tiles[9].m_top_face.getPosition(), TILE_SIZE_PX);
+
+  //   board.m_tiles[15].m_top_face.setPosition(
+  //       board.m_tiles[15].m_top_face.getPosition() -
+  //       sf::Vector2f(0.f, 30.f));
+  //   board.m_tiles[15].m_right_face.setPosition(
+  //       board.m_tiles[15].m_right_face.getPosition() -
+  //       sf::Vector2f(0.f, 30.f));
+  //   board.m_tiles[15].m_left_face.setPosition(
+  //       board.m_tiles[15].m_left_face.getPosition() -
+  //       sf::Vector2f(0.f, 30.f));
+
+
+  //   board.m_tiles[18].m_top_face.setPosition(
+  //       board.m_tiles[18].m_top_face.getPosition() +
+  //       sf::Vector2f(0.f, 30.f));
+  //   board.m_tiles[18].m_right_face.setPosition(
+  //       board.m_tiles[18].m_right_face.getPosition() +
+  //       sf::Vector2f(0.f, 30.f));
+  //   board.m_tiles[18].m_left_face.setPosition(
+  //       board.m_tiles[18].m_left_face.getPosition() +
+  //       sf::Vector2f(0.f, 30.f));
 
   // GAMEPLAY LOOP
   while (window.isOpen()) {
@@ -90,11 +95,15 @@ int main() {
     const sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
     const bool mouse_clicked = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
+    const int hovered_tile_idx =
+        get_hovered_tile_idx(board.m_tiles, board.m_tile_size, mouse_pos);
+
     // UPDATE
-    update_tiles(board.m_tiles, board.m_tile_size, mouse_pos);
+    update_tiles(board.m_tiles, hovered_tile_idx);
     update_enemies(enemies, spawn_pos, tower_pos);
     update_bullets(bullets);
     update_turrets(turrets, enemies, bullets);
+
 
     static bool tower_selected = false;
     turret_button.update(mouse_pos, mouse_clicked, tower_selected);
