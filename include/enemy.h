@@ -1,9 +1,10 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
+#include "util.h"
+
 #include <SFML/Graphics.hpp>
 
-#include "util.h"
 
 struct Enemy {
 private:
@@ -29,6 +30,7 @@ public:
     shape.setPosition(shape.getPosition() + dir * speed);
   }
 };
+
 
 Enemy::Enemy(const sf::Vector2f spawn_pos, const sf::Vector2f tower_pos)
     : shape(build_circle(spawn_pos, sf::Color(240, 200, 78), 20.f)), speed(.8f),

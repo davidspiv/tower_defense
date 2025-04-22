@@ -1,6 +1,7 @@
 #include "../include/board.h"
 #include "../include/bullet.h"
 #include "../include/enemy.h"
+#include "../include/tile.h"
 #include "../include/turret.h"
 #include "../include/util.h"
 

@@ -1,21 +1,10 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include "tile.h"
+
 #include <SFML/Graphics.hpp>
 #include <iostream>
-
-
-struct Tile {
-  sf::Vector2f m_origin;
-  sf::Vector2f m_screen_pos;
-  sf::ConvexShape m_top_face;
-  sf::ConvexShape m_right_face;
-  sf::ConvexShape m_left_face;
-
-  Tile(const sf::Vector2f origin, const unsigned size);
-
-  bool contains(const sf::Vector2f &screen_point, const float tile_size);
-};
 
 
 struct Board {
@@ -37,72 +26,6 @@ struct Board {
   // Draws all the tiles onto the screen
   void draw(sf::RenderWindow &window);
 };
-
-
-static sf::ConvexShape create_top_face(float size) {
-  sf::ConvexShape shape(4);
-  float half = size / 2.f;
-  shape.setPoint(0, {0.f, -half});
-  shape.setPoint(1, {size, 0.f});
-  shape.setPoint(2, {0.f, half});
-  shape.setPoint(3, {-size, 0.f});
-
-  shape.setFillColor(sf::Color(52, 95, 60));
-  shape.setOutlineThickness(-2.f);
-  shape.setOutlineColor(sf::Color(93, 171, 108));
-
-  return shape;
-}
-
-
-static sf::ConvexShape create_right_face(float size) {
-  sf::ConvexShape shape(4);
-  float w = size;
-  float h = size / 2.f;
-  float z = size;
-
-  shape.setPoint(0, {w, 0.f});
-  shape.setPoint(1, {0.f, h});
-  shape.setPoint(2, {0.f, h + z});
-  shape.setPoint(3, {w, z});
-
-  shape.setFillColor(sf::Color(78, 46, 25));
-  shape.setOutlineThickness(-2.f);
-  shape.setOutlineColor(sf::Color(154, 91, 49));
-
-  return shape;
-}
-
-
-static sf::ConvexShape create_left_face(float size) {
-  sf::ConvexShape shape(4);
-  float w = size;
-  float h = size / 2.f;
-  float z = size;
-
-  shape.setPoint(0, {-w, 0.f});
-  shape.setPoint(1, {0.f, h});
-  shape.setPoint(2, {0.f, h + z});
-  shape.setPoint(3, {-w, z});
-
-  shape.setFillColor(sf::Color(139, 99, 64));
-  shape.setOutlineThickness(-2.f);
-  shape.setOutlineColor(sf::Color(215, 153, 99));
-
-  return shape;
-}
-
-
-Tile::Tile(const sf::Vector2f origin, const unsigned size)
-    : m_origin(origin), m_top_face(sf::ConvexShape(4)),
-      m_right_face(sf::ConvexShape(4)), m_left_face(sf::ConvexShape(4)) {
-
-  float size_f = static_cast<float>(size);
-
-  m_top_face = create_top_face(size_f);
-  m_right_face = create_right_face(size_f);
-  m_left_face = create_left_face(size_f);
-}
 
 
 bool Tile::contains(const sf::Vector2f &screen_point, const float tile_size) {
