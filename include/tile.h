@@ -1,7 +1,9 @@
 #ifndef TILE_H
 #define TILE_H
 
+
 #include <SFML/Graphics.hpp>
+
 
 struct Tile {
   sf::Vector2f m_origin;
@@ -79,6 +81,18 @@ Tile::Tile(const sf::Vector2f origin, const unsigned size)
   m_top_face = create_top_face(size_f);
   m_right_face = create_right_face(size_f);
   m_left_face = create_left_face(size_f);
+}
+
+
+void update_tiles(std::vector<Tile> &tiles, const float tile_size,
+                  const sf::Vector2i mouse_pos) {
+  for (auto &tile : tiles) {
+    if (tile.contains(sf::Vector2f(mouse_pos), tile_size)) {
+      tile.m_top_face.setFillColor(sf::Color(93, 171, 108));
+    } else {
+      tile.m_top_face.setFillColor(sf::Color(52, 95, 60));
+    }
+  }
 }
 
 #endif
