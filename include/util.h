@@ -1,9 +1,9 @@
 #ifndef UTIL_H
 #define UTIL_H
+#define _USE_MATH_DEFINES // for visual studio
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
-
 
 class MouseThrottler {
 public:

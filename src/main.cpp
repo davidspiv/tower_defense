@@ -9,7 +9,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <chrono>
-#include <cmath>
 #include <thread> // For std::this_thread::sleep_for
 #include <vector>
 
@@ -33,7 +32,6 @@ int main() {
 
   sf::Clock globalClock;
   MouseThrottler clickThrottler(sf::milliseconds(200));
-
 
   const sf::Vector2f spawn_pos = board.m_tiles[5].m_screen_pos;
   const sf::Vector2f tower_pos = board.m_tiles[9].m_screen_pos;
