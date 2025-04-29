@@ -2,13 +2,11 @@
 #define TILE_H
 
 
-#include <SFML/Graphics.hpp>
-
 #include "util.h"
 
+#include <SFML/Graphics.hpp>
 
 enum Tile_Role { EMPTY, TURRET, TOWER };
-
 
 struct Tile {
   sf::Vector2f m_origin;
@@ -18,13 +16,14 @@ struct Tile {
   sf::ConvexShape m_left_face;
   Tile_Role m_role;
 
-   sf::Color color_default;
-   sf::Color color_turret_placement_approved;
+  sf::Color color_default;
+  sf::Color color_turret_placement_approved;
 
   Tile(const sf::Vector2f origin, const unsigned size);
 
   bool contains(const sf::Vector2f &screen_point, const float tile_size);
 };
+
 
 Tile::Tile(const sf::Vector2f origin, const unsigned size)
     : m_origin(origin), m_top_face(sf::ConvexShape(4)),
