@@ -73,8 +73,8 @@ int main() {
   };
 
   float x_min = std::numeric_limits<float>::max();
-  float x_max = std::numeric_limits<float>::lowest();
   float y_min = std::numeric_limits<float>::max();
+  float x_max = std::numeric_limits<float>::lowest();
   float y_max = std::numeric_limits<float>::lowest();
 
   for (const auto &point : points) {
