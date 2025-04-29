@@ -99,28 +99,4 @@ bool Tile::contains(const sf::Vector2f &screen_point, const float tile_size) {
   return (x >= 0.f && x <= tile_size && y >= 0.f && y <= tile_size);
 }
 
-
-int get_hovered_tile_idx(std::vector<Tile> &tiles, const float tile_size,
-                         const sf::Vector2i mouse_pos) {
-  for (size_t i = 0; i < tiles.size(); i++) {
-    if (tiles[i].contains(sf::Vector2f(mouse_pos), tile_size)) {
-      return i;
-    }
-  }
-
-  return -1;
-}
-
-
-void update_tiles(std::vector<Tile> &tiles, const float tile_size,
-                  const sf::Vector2i mouse_pos, int &hovered_tile_idx) {
-
-  int old_hovered_tile_idx = hovered_tile_idx;
-  hovered_tile_idx = get_hovered_tile_idx(tiles, tile_size, mouse_pos);
-
-  if (old_hovered_tile_idx > 0 && hovered_tile_idx != old_hovered_tile_idx) {
-    tiles[old_hovered_tile_idx].m_top_face.setFillColor(sf::Color(52, 95, 60));
-  }
-}
-
 #endif
