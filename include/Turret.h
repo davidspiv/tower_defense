@@ -132,12 +132,4 @@ void Turret::update(std::vector<Enemy> &enemies, std::vector<Bullet> &bullets) {
 }
 
 
-void update_turrets(std::vector<Turret> &turrets, std::vector<Enemy> &enemies,
-                    std::vector<Bullet> &bullets) {
-  for (auto &turret : turrets) {
-    turret.update(enemies, bullets);
-  }
-}
-
-
 #endif
