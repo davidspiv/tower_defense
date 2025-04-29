@@ -12,6 +12,7 @@ struct Board {
   const unsigned m_tile_size;
   const sf::Vector2i m_screen_dim;
   std::vector<Tile> m_tiles;
+  int hovered_tile_idx;
 
   Board(sf::Vector2u grid_dim, unsigned tile_size, sf::Vector2i screen_dim);
 
@@ -31,7 +32,7 @@ struct Board {
 Board::Board(sf::Vector2u grid_dim, const unsigned tile_size,
              sf::Vector2i screen_dim)
     : m_grid_dim(grid_dim), m_tile_size(tile_size),
-      m_screen_dim(sf::Vector2f(screen_dim)) {
+      m_screen_dim(sf::Vector2f(screen_dim)), hovered_tile_idx(-1) {
   populate_tiles();
 }
 

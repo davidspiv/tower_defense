@@ -113,9 +113,8 @@ int get_hovered_tile_idx(std::vector<Tile> &tiles, const float tile_size,
 
 
 int update_tiles(std::vector<Tile> &tiles, const float tile_size,
-                 const sf::Vector2i mouse_pos) {
+                 const sf::Vector2i mouse_pos, int &hovered_tile_idx) {
 
-  static int hovered_tile_idx = -1;
   int old_hovered_tile_idx = hovered_tile_idx;
   hovered_tile_idx = get_hovered_tile_idx(tiles, tile_size, mouse_pos);
 

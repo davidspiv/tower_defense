@@ -65,14 +65,12 @@ int main() {
 
 
     // UPDATE
-    const int hovered_tile_idx =
-        update_tiles(board.m_tiles, board.m_tile_size, mouse_pos);
-    update_enemies(enemies, spawn_pos, tower_pos);
-    update_bullets(bullets);
-    update_turrets(turrets, enemies, bullets);
 
-    if (hovered_tile_idx >= 0) {
-      Tile &tile = board.m_tiles[hovered_tile_idx];
+    update_tiles(board.m_tiles, board.m_tile_size, mouse_pos,
+                 board.hovered_tile_idx);
+
+    if (board.hovered_tile_idx >= 0) {
+      Tile &tile = board.m_tiles[board.hovered_tile_idx];
 
       if (turret_button.tower_selected) {
         if (tile.m_role == EMPTY && mouse_clicked) {
@@ -94,6 +92,10 @@ int main() {
         }
       }
     }
+
+    update_enemies(enemies, spawn_pos, tower_pos);
+    update_bullets(bullets);
+    update_turrets(turrets, enemies, bullets);
 
     turret_button.update(mouse_pos, mouse_clicked);
 
