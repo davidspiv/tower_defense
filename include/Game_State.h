@@ -12,8 +12,6 @@
 class Game_State {
 
 public:
-  sf::RenderWindow window;
-
   std::vector<Enemy> enemies;
   std::vector<Bullet> bullets;
   std::vector<Turret> turrets;
@@ -22,8 +20,8 @@ public:
   Button turret_button;
   Tower tower;
 
-  Game_State(const sf::Vector2u grid_dim, const unsigned tile_size_px,
-             const sf::Vector2i screen_dim)
+  Game_State(const sf::Vector2i screen_dim, const sf::Vector2u grid_dim,
+             const unsigned tile_size_px)
       : board(grid_dim, tile_size_px, screen_dim),
         turret_button(Button(screen_dim)),
         tower(Tower(board.tower_pos, tile_size_px)) {};
@@ -31,6 +29,8 @@ public:
   void update(const sf::Vector2i mouse_pos, const bool mouse_clicked);
 
   void draw(sf::RenderWindow &window);
+
+  void run(sf::RenderWindow &window, const int target_fps);
 };
 
 void Game_State::update(const sf::Vector2i mouse_pos,
@@ -95,4 +95,42 @@ void Game_State::draw(sf::RenderWindow &window) {
 
   window.draw(turret_button.shape);
   window.draw(tower.shape);
+}
+
+
+void Game_State::run(sf::RenderWindow &window, const int target_fps) {
+  const sf::Time frame_duration = sf::seconds(1.0f / target_fps);
+
+  sf::Clock globalClock;
+  MouseThrottler clickThrottler(sf::milliseconds(200));
+
+  // GAMEPLAY LOOP
+  while (window.isOpen()) {
+    sf::Clock frame_clock;
+
+    // INPUT
+    sf::Event event;
+    while (window.pollEvent(event)) {
+      if (event.type == sf::Event::Closed)
+        window.close();
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+      window.close();
+    }
+
+    const sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+    const bool mouse_clicked = sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
+                               clickThrottler.canClick(globalClock);
+
+
+    update(mouse_pos, mouse_clicked);
+    draw(window);
+
+    window.display();
+    sf::Time frameEnd = frame_clock.getElapsedTime();
+    if (frameEnd < frame_duration) {
+      sf::sleep(frame_duration - frameEnd);
+    }
+  }
 }
