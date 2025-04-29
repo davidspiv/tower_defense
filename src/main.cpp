@@ -63,18 +63,10 @@ int main() {
     const bool mouse_clicked = sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
                                clickThrottler.canClick(globalClock);
 
-    static int hovered_tile_idx = -1;
-    int old_hovered_tile_idx = hovered_tile_idx;
-    hovered_tile_idx =
-        get_hovered_tile_idx(board.m_tiles, board.m_tile_size, mouse_pos);
-
-    if (hovered_tile_idx != old_hovered_tile_idx) {
-      board.m_tiles[old_hovered_tile_idx].m_top_face.setFillColor(
-          sf::Color(52, 95, 60));
-    }
 
     // UPDATE
-    update_tiles(board.m_tiles);
+    const int hovered_tile_idx =
+        update_tiles(board.m_tiles, board.m_tile_size, mouse_pos);
     update_enemies(enemies, spawn_pos, tower_pos);
     update_bullets(bullets);
     update_turrets(turrets, enemies, bullets);
