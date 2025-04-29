@@ -1,10 +1,6 @@
-#include "../include/board.h"
-#include "../include/bullet.h"
-#include "../include/button.h"
-#include "../include/enemy.h"
-#include "../include/tile.h"
-#include "../include/tower.h"
-#include "../include/turret.h"
+#include "../include/Board.h"
+#include "../include/Game_State.h"
+#include "../include/Tower.h"
 #include "../include/util.h"
 
 #include <SFML/Graphics.hpp>
@@ -17,6 +13,60 @@ constexpr int SCREEN_HEIGHT = 1080;
 constexpr unsigned BOARD_ROWS = 5;
 constexpr unsigned BOARD_COLS = 5;
 constexpr unsigned TILE_SIZE_PX = 100;
+
+class Game_State {
+
+public:
+  std::vector<Enemy> enemies;
+  std::vector<Bullet> bullets;
+  std::vector<Turret> turrets;
+
+  Button turret_button;
+
+  Game_State(const sf::Vector2i screen_dim)
+      : turret_button(Button(screen_dim)) {};
+
+  void update(Board &board, const sf::Vector2i mouse_pos,
+              const bool mouse_clicked);
+};
+
+void Game_State::update(Board &board, const sf::Vector2i mouse_pos,
+                        const bool mouse_clicked) {
+  update_tiles(board.m_tiles, board.m_tile_size, mouse_pos,
+               board.hovered_tile_idx);
+
+
+  if (board.hovered_tile_idx >= 0) {
+    Tile &tile = board.m_tiles[board.hovered_tile_idx];
+
+    if (turret_button.tower_selected) {
+      if (tile.m_role == EMPTY && mouse_clicked) {
+        turrets.emplace_back(
+            Turret(tile.m_top_face.getPosition(), board.m_tile_size));
+        tile.m_role = TURRET;
+      }
+
+      if (tile.contains(sf::Vector2f(mouse_pos), board.m_tile_size)) {
+        tile.m_top_face.setFillColor(sf::Color(93, 171, 108));
+      }
+    } else if (tile.m_role == TURRET && mouse_clicked) {
+      for (size_t i = 0; i < turrets.size(); i++) {
+        if (turrets[i].center_of_home_tile == tile.m_top_face.getPosition()) {
+          turrets.erase(turrets.begin() + i);
+          tile.m_role = EMPTY;
+          break; // Only remove one
+        }
+      }
+    }
+  }
+
+  turret_button.update(mouse_pos, mouse_clicked);
+
+  update_enemies(enemies, board.spawn_pos, board.tower_pos);
+  update_bullets(bullets);
+  update_turrets(turrets, enemies, bullets);
+}
+
 
 int main() {
   const sf::Vector2i SCREEN_DIM(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -33,14 +83,7 @@ int main() {
   sf::Clock globalClock;
   MouseThrottler clickThrottler(sf::milliseconds(200));
 
-  const sf::Vector2f spawn_pos = board.m_tiles[5].m_screen_pos;
-  const sf::Vector2f tower_pos = board.m_tiles[9].m_screen_pos;
-
-  std::vector<Enemy> enemies;
-  std::vector<Bullet> bullets;
-  std::vector<Turret> turrets;
-
-  Button turret_button(SCREEN_DIM);
+  Game_State game_state(SCREEN_DIM);
 
   const Tower tower(board.m_tiles[9].m_top_face.getPosition(), TILE_SIZE_PX);
 
@@ -65,29 +108,18 @@ int main() {
 
 
     // UPDATE
-
-
-    update_tiles(board.m_tiles, board.m_tile_size, mouse_pos,
-                 board.hovered_tile_idx);
-
-    board.updateBoard(turret_button, turrets, mouse_clicked, mouse_pos);
-
-    update_enemies(enemies, spawn_pos, tower_pos);
-    update_bullets(bullets);
-    update_turrets(turrets, enemies, bullets);
-
-    turret_button.update(mouse_pos, mouse_clicked);
+    game_state.update(board, mouse_pos, mouse_clicked);
 
     // DRAW
     window.clear(sf::Color(19, 19, 19));
 
     board.draw(window);
 
-    for (auto &enemy : enemies) {
+    for (auto &enemy : game_state.enemies) {
       window.draw(enemy.shape);
     }
 
-    for (auto &turret : turrets) {
+    for (auto &turret : game_state.turrets) {
       if (turret.barrel_shape.getPosition().y > turret.barrel_anchor.y) {
         window.draw(turret.base_shape);
         window.draw(turret.barrel_shape);
@@ -97,11 +129,11 @@ int main() {
       }
     }
 
-    for (auto &bullet : bullets) {
+    for (auto &bullet : game_state.bullets) {
       window.draw(bullet.shape);
     }
 
-    window.draw(turret_button.shape);
+    window.draw(game_state.turret_button.shape);
 
     window.draw(tower.shape);
 

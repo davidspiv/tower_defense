@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "enemy.h"
+#include "Enemy.h"
 #include "util.h"
 
 

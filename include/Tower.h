@@ -1,7 +1,7 @@
 #ifndef TOWER_H
 #define TOWER_H
 
-#include "../include/bullet.h"
+#include "../include/Bullet.h"
 #include "../include/util.h"
 
 #include <SFML/Graphics.hpp>
