@@ -13,7 +13,7 @@ struct Button {
   sf::VertexArray shape;
   sf::Color color_norm = sf::Color(189, 181, 155);
   sf::Color color_pressed = sf::Color(112, 107, 92);
-  bool tower_selected = false;
+  bool turret_selected = false;
   bool was_hovered = false;
 
   Button(const sf::Vector2i screen_dim)
@@ -39,12 +39,12 @@ struct Button {
   void update(const sf::Vector2i &mouse_pos, bool clicked) {
     if (!is_hovered(mouse_pos) && clicked) {
       set_fill_color(color_norm);
-      tower_selected = false;
+      turret_selected = false;
 
-    } else if (tower_selected || (is_hovered(mouse_pos) && clicked)) {
+    } else if (turret_selected || (is_hovered(mouse_pos) && clicked)) {
 
       set_fill_color(color_pressed);
-      tower_selected = true;
+      turret_selected = true;
       was_hovered = true;
 
     } else if (was_hovered) {

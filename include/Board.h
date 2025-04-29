@@ -29,6 +29,11 @@ struct Board {
   // Fills the board with tiles and positions them in isometric layout
   void populate_tiles();
 
+  int get_hovered_tile_idx(const sf::Vector2i mouse_pos);
+
+  void update_turret_placement_feedback(const sf::Vector2i &mouse_pos,
+                                        bool turret_selected);
+
   // Draws all the tiles onto the screen
   void draw(sf::RenderWindow &window);
 };
@@ -80,6 +85,42 @@ void Board::populate_tiles() {
   }
 }
 
+
+int Board::get_hovered_tile_idx(const sf::Vector2i mouse_pos) {
+  if (hovered_tile_idx >= 0) {
+    if (m_tiles[hovered_tile_idx].contains(sf::Vector2f(mouse_pos),
+                                           m_tile_size)) {
+      return hovered_tile_idx;
+    }
+  }
+
+  for (size_t i = 0; i < m_tiles.size(); i++) {
+    if (m_tiles[i].contains(sf::Vector2f(mouse_pos), m_tile_size)) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+
+void Board::update_turret_placement_feedback(const sf::Vector2i &mouse_pos,
+                                             bool turret_selected) {
+  int old_idx = hovered_tile_idx;
+  hovered_tile_idx = get_hovered_tile_idx(mouse_pos);
+
+  if (old_idx >= 0 && hovered_tile_idx != old_idx) {
+    m_tiles[old_idx].m_top_face.setFillColor(m_tiles[old_idx].color_default);
+  }
+
+  if (hovered_tile_idx >= 0) {
+    Tile &tile = m_tiles[hovered_tile_idx];
+    if (turret_selected && tile.m_role == EMPTY) {
+      tile.m_top_face.setFillColor(
+          tile.color_turret_placement_approved); // highlight buildable
+    }
+  }
+}
 
 void Board::draw(sf::RenderWindow &window) {
   for (auto &tile : m_tiles) {

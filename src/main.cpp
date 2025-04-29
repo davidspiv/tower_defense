@@ -17,13 +17,13 @@ int main() {
   constexpr unsigned TILE_SIZE_PX = 100;
   constexpr int TARGET_FPS = 60;
 
-  const sf::Vector2i SCREEN_DIM(SCREEN_WIDTH, SCREEN_HEIGHT); // px
-  const sf::Vector2u GRID_DIM(BOARD_ROWS, BOARD_COLS);        // cells
-
-  Game_State game(SCREEN_DIM, GRID_DIM, TILE_SIZE_PX);
+  const sf::Vector2i screen_dim(SCREEN_WIDTH, SCREEN_HEIGHT); // px
+  const sf::Vector2u grid_dim(BOARD_ROWS, BOARD_COLS);        // cells
 
   sf::RenderWindow window;
-  setup_window(window, SCREEN_DIM);
+  setup_window(window, screen_dim);
+
+  Game_State game(screen_dim, grid_dim, TILE_SIZE_PX);
 
   game.run(window, TARGET_FPS);
 }
