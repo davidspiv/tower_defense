@@ -5,12 +5,16 @@
 #include "../include/Enemy.h"
 #include "../include/Tower.h"
 #include "../include/Turret.h"
+#include "../include/util.h"
 
+#include <SFML/Graphics.hpp>
 #include <vector>
 
 class Game_State {
 
 public:
+  sf::RenderWindow window;
+
   std::vector<Enemy> enemies;
   std::vector<Bullet> bullets;
   std::vector<Turret> turrets;
@@ -23,7 +27,9 @@ public:
              const sf::Vector2i screen_dim)
       : board(grid_dim, tile_size_px, screen_dim),
         turret_button(Button(screen_dim)),
-        tower(Tower(board.tower_pos, tile_size_px)) {};
+        tower(Tower(board.tower_pos, tile_size_px)) {
+    setup_window(window, screen_dim);
+  };
 
   void update(const sf::Vector2i mouse_pos, const bool mouse_clicked);
 

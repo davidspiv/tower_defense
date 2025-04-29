@@ -22,39 +22,35 @@ int main() {
   const int TARGET_FPS = 60;
   const sf::Time FRAME_DURATION = sf::seconds(1.0f / TARGET_FPS);
 
-  // SETUP
-  sf::RenderWindow window;
-  setup_window(window, SCREEN_DIM);
-
   sf::Clock globalClock;
   MouseThrottler clickThrottler(sf::milliseconds(200));
 
   Game_State game_state(GRID_DIM, TILE_SIZE_PX, SCREEN_DIM);
 
   // GAMEPLAY LOOP
-  while (window.isOpen()) {
+  while (game_state.window.isOpen()) {
     sf::Clock frame_clock;
 
     // INPUT
     sf::Event event;
-    while (window.pollEvent(event)) {
+    while (game_state.window.pollEvent(event)) {
       if (event.type == sf::Event::Closed)
-        window.close();
+        game_state.window.close();
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-      window.close();
+      game_state.window.close();
     }
 
-    const sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+    const sf::Vector2i mouse_pos = sf::Mouse::getPosition(game_state.window);
     const bool mouse_clicked = sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
                                clickThrottler.canClick(globalClock);
 
 
     game_state.update(mouse_pos, mouse_clicked);
-    game_state.draw(window);
+    game_state.draw(game_state.window);
 
-    window.display();
+    game_state.window.display();
     sf::Time frameEnd = frame_clock.getElapsedTime();
     if (frameEnd < FRAME_DURATION) {
       sf::sleep(FRAME_DURATION - frameEnd);
