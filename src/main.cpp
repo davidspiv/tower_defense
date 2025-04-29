@@ -66,32 +66,11 @@ int main() {
 
     // UPDATE
 
+
     update_tiles(board.m_tiles, board.m_tile_size, mouse_pos,
                  board.hovered_tile_idx);
 
-    if (board.hovered_tile_idx >= 0) {
-      Tile &tile = board.m_tiles[board.hovered_tile_idx];
-
-      if (turret_button.tower_selected) {
-        if (tile.m_role == EMPTY && mouse_clicked) {
-          turrets.emplace_back(
-              Turret(tile.m_top_face.getPosition(), board.m_tile_size));
-          tile.m_role = TURRET;
-        }
-
-        if (tile.contains(sf::Vector2f(mouse_pos), board.m_tile_size)) {
-          tile.m_top_face.setFillColor(sf::Color(93, 171, 108));
-        }
-      } else if (tile.m_role == TURRET && mouse_clicked) {
-        for (size_t i = 0; i < turrets.size(); i++) {
-          if (turrets[i].center_of_home_tile == tile.m_top_face.getPosition()) {
-            turrets.erase(turrets.begin() + i);
-            tile.m_role = EMPTY;
-            break; // Only remove one
-          }
-        }
-      }
-    }
+    board.updateBoard(turret_button, turrets, mouse_clicked, mouse_pos);
 
     update_enemies(enemies, spawn_pos, tower_pos);
     update_bullets(bullets);

@@ -112,8 +112,8 @@ int get_hovered_tile_idx(std::vector<Tile> &tiles, const float tile_size,
 }
 
 
-int update_tiles(std::vector<Tile> &tiles, const float tile_size,
-                 const sf::Vector2i mouse_pos, int &hovered_tile_idx) {
+void update_tiles(std::vector<Tile> &tiles, const float tile_size,
+                  const sf::Vector2i mouse_pos, int &hovered_tile_idx) {
 
   int old_hovered_tile_idx = hovered_tile_idx;
   hovered_tile_idx = get_hovered_tile_idx(tiles, tile_size, mouse_pos);
@@ -121,8 +121,6 @@ int update_tiles(std::vector<Tile> &tiles, const float tile_size,
   if (hovered_tile_idx != old_hovered_tile_idx) {
     tiles[old_hovered_tile_idx].m_top_face.setFillColor(sf::Color(52, 95, 60));
   }
-
-  return hovered_tile_idx;
 }
 
 #endif

@@ -3,6 +3,9 @@
 
 #include "tile.h"
 
+#include "button.h"
+#include "tile.h"
+#include "turret.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -24,9 +27,41 @@ struct Board {
   // Fills the board with tiles and positions them in isometric layout
   void populate_tiles();
 
+  void updateBoard(const Button &turret_button, std::vector<Turret> &turrets,
+                   const bool mouse_clicked, const sf::Vector2i mouse_pos);
+
   // Draws all the tiles onto the screen
   void draw(sf::RenderWindow &window);
 };
+
+
+void Board::updateBoard(const Button &turret_button,
+                        std::vector<Turret> &turrets, const bool mouse_clicked,
+                        const sf::Vector2i mouse_pos) {
+  if (hovered_tile_idx >= 0) {
+    Tile &tile = m_tiles[hovered_tile_idx];
+
+    if (turret_button.tower_selected) {
+      if (tile.m_role == EMPTY && mouse_clicked) {
+        turrets.emplace_back(
+            Turret(tile.m_top_face.getPosition(), m_tile_size));
+        tile.m_role = TURRET;
+      }
+
+      if (tile.contains(sf::Vector2f(mouse_pos), m_tile_size)) {
+        tile.m_top_face.setFillColor(sf::Color(93, 171, 108));
+      }
+    } else if (tile.m_role == TURRET && mouse_clicked) {
+      for (size_t i = 0; i < turrets.size(); i++) {
+        if (turrets[i].center_of_home_tile == tile.m_top_face.getPosition()) {
+          turrets.erase(turrets.begin() + i);
+          tile.m_role = EMPTY;
+          break; // Only remove one
+        }
+      }
+    }
+  }
+}
 
 
 Board::Board(sf::Vector2u grid_dim, const unsigned tile_size,
