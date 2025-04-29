@@ -25,14 +25,11 @@ int main() {
   // SETUP
   sf::RenderWindow window;
   setup_window(window, SCREEN_DIM);
-  Board board(GRID_DIM, TILE_SIZE_PX, SCREEN_DIM);
 
   sf::Clock globalClock;
   MouseThrottler clickThrottler(sf::milliseconds(200));
 
-  Game_State game_state(SCREEN_DIM);
-
-  const Tower tower(board.m_tiles[9].m_top_face.getPosition(), TILE_SIZE_PX);
+  Game_State game_state(GRID_DIM, TILE_SIZE_PX, SCREEN_DIM);
 
   // GAMEPLAY LOOP
   while (window.isOpen()) {
@@ -54,35 +51,8 @@ int main() {
                                clickThrottler.canClick(globalClock);
 
 
-    // UPDATE
-    game_state.update(board, mouse_pos, mouse_clicked);
-
-    // DRAW
-    window.clear(sf::Color(19, 19, 19));
-
-    board.draw(window);
-
-    for (auto &enemy : game_state.enemies) {
-      window.draw(enemy.shape);
-    }
-
-    for (auto &turret : game_state.turrets) {
-      if (turret.barrel_shape.getPosition().y > turret.barrel_anchor.y) {
-        window.draw(turret.base_shape);
-        window.draw(turret.barrel_shape);
-      } else {
-        window.draw(turret.barrel_shape);
-        window.draw(turret.base_shape);
-      }
-    }
-
-    for (auto &bullet : game_state.bullets) {
-      window.draw(bullet.shape);
-    }
-
-    window.draw(game_state.turret_button.shape);
-
-    window.draw(tower.shape);
+    game_state.update(mouse_pos, mouse_clicked);
+    game_state.draw(window);
 
     window.display();
     sf::Time frameEnd = frame_clock.getElapsedTime();
