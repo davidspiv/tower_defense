@@ -72,7 +72,6 @@ void Engine::run(int const target_fps)
 {
     // GAMEPLAY LOOP
     while (window.isOpen()) {
-
         input();
         update_all();
         draw_all();

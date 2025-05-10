@@ -19,9 +19,7 @@ struct Turret {
     float barrel_angle;
 
     Turret(sf::Vector2f const tile_center, unsigned const tile_size);
-
     void update(std::vector<Enemy>& enemies, std::vector<Bullet>& bullets);
-
     void update();
 };
 
@@ -51,8 +49,6 @@ sf::VertexArray build_base_shape()
     };
 
     sf::VertexArray shape(sf::TriangleFan);
-
-    // HANDLE TURRET BASE
     for (auto const& pt : base_shape_pts) {
         shape.append(sf::Vertex(pt, sf::Color(203, 186, 158)));
     }
@@ -65,8 +61,14 @@ sf::VertexArray build_base_shape()
     return shape;
 }
 
+sf::VertexArray const& get_base_shape()
+{
+    static sf::VertexArray const base_shape = build_base_shape();
+    return base_shape;
+}
+
 Turret::Turret(sf::Vector2f const tile_center, unsigned const tile_size)
-    : base_shape(build_base_shape())
+    : base_shape(get_base_shape())
     , fire_timer(100)
     , center_of_home_tile(tile_center)
     , barrel_shape(build_circle())
@@ -77,10 +79,9 @@ Turret::Turret(sf::Vector2f const tile_center, unsigned const tile_size)
     , barrel_angle(0.f)
 {
     // place base on the desired tile center
-    float const tile_size_f = static_cast<float>(tile_size);
     sf::Transform transform;
     transform.translate(tile_center);
-    transform.scale(tile_size_f * 0.833f, tile_size_f * 0.833f);
+    transform.scale(tile_size * 0.833f, tile_size * 0.833f);
 
     for (std::size_t i = 0; i < base_shape.getVertexCount(); ++i) {
         base_shape[i].position = transform.transformPoint(base_shape[i].position);
@@ -94,7 +95,6 @@ Turret::Turret(sf::Vector2f const tile_center, unsigned const tile_size)
 
 void Turret::update(std::vector<Enemy>& enemies, std::vector<Bullet>& bullets)
 {
-
     float const a = barrel_ellipse_width / 2.f;
     float const b = barrel_ellipse_height / 2.f;
 
