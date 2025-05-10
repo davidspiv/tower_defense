@@ -1,1 +1,35 @@
-MaxEmptyLinesToKeep : 2
+---
+AlignEscapedNewlines: Left
+AlignTrailingComments:
+    Kind: Always
+    OverEmptyLines: 0
+BasedOnStyle: WebKit
+BraceWrapping:
+    AfterFunction: true
+BreakBeforeBraces: Custom
+BreakBeforeInheritanceComma: true
+BreakConstructorInitializers: BeforeComma
+IndentPPDirectives: AfterHash
+IndentRequiresClause: false
+InsertNewlineAtEOF: true
+LineEnding: LF
+NamespaceIndentation: None
+QualifierAlignment: Right
+ColumnLimit: 100
+RemoveSemicolon: true
+RequiresClausePosition: WithFollowing
+RequiresExpressionIndentation: OuterScope
+SpaceAfterTemplateKeyword: false
+
+---
+Language: ObjC
+BinPackParameters: false
+BraceWrapping:
+    AfterObjCDeclaration: true
+ObjCBinPackProtocolList: Never
+ObjCBlockIndentWidth: 4
+ObjCBreakBeforeNestedBlockParam: true
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: true
+
+...

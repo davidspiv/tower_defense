@@ -42,28 +42,6 @@ auto calc_dist(const sf::Vector2f coord_a, const sf::Vector2f coord_b) {
   return std::sqrt(mag.x * mag.x + mag.y * mag.y);
 }
 
-
-// set window dimensions and center in desktop environment
-void setup_window(sf::RenderWindow &window, sf::Vector2i screen_size) {
-  const unsigned width = static_cast<unsigned>(screen_size.x);
-  const unsigned height = static_cast<unsigned>(screen_size.y);
-
-  sf::ContextSettings settings;
-  settings.antialiasingLevel = 8;
-
-  window.create(sf::VideoMode(width, height), "Iso Demo", sf::Style::Default,
-                settings);
-
-  const auto desktop = sf::VideoMode::getDesktopMode();
-  window.setPosition({static_cast<int>(desktop.width / 2 - width / 2),
-                      static_cast<int>(desktop.height / 2 - height / 2)});
-
-
-  std::cout << "Anti-Aliasing: "
-            << (window.getSettings().antialiasingLevel ? "ON" : "OFF") << "\n";
-}
-
-
 sf::CircleShape build_circle() {
   sf::CircleShape circle(12.f);
   circle.setFillColor(sf::Color(75, 68, 58));
