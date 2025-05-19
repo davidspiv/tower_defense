@@ -48,24 +48,6 @@ auto calc_dist(sf::Vector2f const coord_a, sf::Vector2f const coord_b)
     return std::sqrt(mag.x * mag.x + mag.y * mag.y);
 }
 
-sf::CircleShape build_circle()
-{
-    sf::CircleShape circle(12.f);
-    circle.setFillColor(sf::Color(75, 68, 58));
-    circle.setOrigin(circle.getRadius(), circle.getRadius());
-
-    return circle;
-}
-
-sf::CircleShape build_circle(sf::Vector2f const pos, sf::Color color, float radius)
-{
-    sf::CircleShape shape(radius);
-    shape.setPosition(pos.x - radius, pos.y - radius);
-    shape.setFillColor(color);
-    shape.setOrigin(shape.getRadius(), shape.getRadius());
-    return shape;
-}
-
 sf::VertexArray build_primitive_rounded_rect(sf::Vector2f const pos, sf::Vector2f const size,
     sf::Color const color, float const radius = 20.f, std::size_t const cornerResolution = 8)
 {
