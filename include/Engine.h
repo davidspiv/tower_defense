@@ -32,13 +32,13 @@ private:
     Tower tower;
 
     void input();
-    void update_all();
+    void update();
     void update_enemies();
     void update_bullets();
     void update_turret_placement();
     void update_turrets();
 
-    void draw_all();
+    void draw();
 };
 
 Engine::Engine(
@@ -50,22 +50,7 @@ Engine::Engine(
     , tower(Tower(board.tower_pos, tile_size_px))
 {
 
-    unsigned const width = static_cast<unsigned>(screen_dim.x);
-    unsigned const height = static_cast<unsigned>(screen_dim.y);
-
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 8;
-
-    window.create(sf::VideoMode(width, height), "Iso Demo", sf::Style::Default, settings);
-
-    auto const desktop = sf::VideoMode::getDesktopMode();
-    window.setPosition({ static_cast<int>(desktop.width / 2 - width / 2),
-        static_cast<int>(desktop.height / 2 - height / 2) });
-
-    window.setFramerateLimit(TARGET_FPS);
-
-    std::cout << "Anti-Aliasing: " << (window.getSettings().antialiasingLevel ? "ON" : "OFF")
-              << "\n";
+    setup_window(window);
 }
 
 void Engine::run(int const target_fps)
@@ -73,8 +58,8 @@ void Engine::run(int const target_fps)
     // GAMEPLAY LOOP
     while (window.isOpen()) {
         input();
-        update_all();
-        draw_all();
+        update();
+        draw();
     }
 }
 
@@ -99,7 +84,7 @@ void Engine::input()
     }
 }
 
-void Engine::update_all()
+void Engine::update()
 {
 
     update_enemies();
@@ -174,7 +159,7 @@ void Engine::update_turrets()
     }
 }
 
-void Engine::draw_all()
+void Engine::draw()
 {
     window.clear(sf::Color(19, 19, 19));
 
