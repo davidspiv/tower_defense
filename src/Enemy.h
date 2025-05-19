@@ -1,6 +1,4 @@
-#ifndef ENEMY_H
-#define ENEMY_H
-
+#pragma once
 #include "util.h"
 
 #include <SFML/Graphics.hpp>
@@ -36,4 +34,3 @@ Enemy::Enemy(const sf::Vector2f spawn_pos, const sf::Vector2f tower_pos)
     : shape(build_circle(spawn_pos, sf::Color(240, 200, 78), 20.f)), speed(.8f),
       health(100), spawn_pos(spawn_pos), tower_pos(tower_pos) {}
 
-#endif

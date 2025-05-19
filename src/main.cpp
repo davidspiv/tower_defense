@@ -1,5 +1,5 @@
-#include "../include/Engine.h"
-#include "../include/config.h"
+#include "Engine.h"
+#include "config.h"
 
 #include <SFML/Graphics.hpp>
 

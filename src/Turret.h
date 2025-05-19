@@ -1,8 +1,7 @@
-#ifndef TURRET_H
-#define TURRET_H
+#pragma once
 
-#include "../include/Bullet.h"
-#include "../include/util.h"
+#include "Bullet.h"
+#include "util.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -23,7 +22,7 @@ struct Turret {
     void update();
 };
 
-sf::VertexArray build_base_shape()
+inline  sf::VertexArray build_base_shape()
 {
     static std::vector<sf::Vector2f> const base_shape_pts = {
         { 1, 0.745007 }, { 0.990843, 0.797121 }, { 0.964488, 0.843055 }, { 0.926444, 0.88006 },
@@ -61,14 +60,17 @@ sf::VertexArray build_base_shape()
     return shape;
 }
 
-sf::VertexArray const& get_base_shape()
+inline sf::CircleShape build_circle()
 {
-    static sf::VertexArray const base_shape = build_base_shape();
-    return base_shape;
+    sf::CircleShape circle(12.f);
+    circle.setFillColor(sf::Color(75, 68, 58));
+    circle.setOrigin(circle.getRadius(), circle.getRadius());
+
+    return circle;
 }
 
-Turret::Turret(sf::Vector2f const tile_center, unsigned const tile_size)
-    : base_shape(get_base_shape())
+inline Turret::Turret(sf::Vector2f const tile_center, unsigned const tile_size)
+    : base_shape(build_base_shape())
     , fire_timer(100)
     , center_of_home_tile(tile_center)
     , barrel_shape(build_circle())
@@ -93,7 +95,7 @@ Turret::Turret(sf::Vector2f const tile_center, unsigned const tile_size)
     barrel_shape.setPosition(tile_center + sf::Vector2f(0.f, -10.f));
 }
 
-void Turret::update(std::vector<Enemy>& enemies, std::vector<Bullet>& bullets)
+inline void Turret::update(std::vector<Enemy>& enemies, std::vector<Bullet>& bullets)
 {
     float const a = barrel_ellipse_width / 2.f;
     float const b = barrel_ellipse_height / 2.f;
@@ -129,4 +131,3 @@ void Turret::update(std::vector<Enemy>& enemies, std::vector<Bullet>& bullets)
     }
 }
 
-#endif

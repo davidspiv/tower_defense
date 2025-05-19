@@ -1,11 +1,12 @@
 #pragma once
-#include "../include/Board.h"
-#include "../include/Bullet.h"
-#include "../include/Button.h"
-#include "../include/Enemy.h"
-#include "../include/Tower.h"
-#include "../include/Turret.h"
-#include "../include/config.h"
+
+#include "Board.h"
+#include "Bullet.h"
+#include "Button.h"
+#include "Enemy.h"
+#include "Tower.h"
+#include "Turret.h"
+#include "config.h"
 
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -41,7 +42,27 @@ private:
     void draw();
 };
 
-Engine::Engine(
+void setup_window(sf::RenderWindow& window)
+{
+    unsigned const width = static_cast<unsigned>(SCREEN_WIDTH);
+    unsigned const height = static_cast<unsigned>(SCREEN_HEIGHT);
+
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
+
+    window.create(sf::VideoMode(width, height), "Iso Demo", sf::Style::Default, settings);
+
+    auto const desktop = sf::VideoMode::getDesktopMode();
+    window.setPosition({ static_cast<int>(desktop.width / 2 - width / 2),
+        static_cast<int>(desktop.height / 2 - height / 2) });
+
+    window.setFramerateLimit(TARGET_FPS);
+
+    std::cout << "Anti-Aliasing: " << (window.getSettings().antialiasingLevel ? "ON" : "OFF")
+              << "\n";
+}
+
+inline Engine::Engine(
     sf::Vector2i const screen_dim, sf::Vector2u const grid_dim, unsigned const tile_size_px)
     : mouse_clicked(false)
     , mouse_pos(sf::Vector2i(0, 0))
@@ -53,7 +74,7 @@ Engine::Engine(
     setup_window(window);
 }
 
-void Engine::run(int const target_fps)
+inline void Engine::run(int const target_fps)
 {
     // GAMEPLAY LOOP
     while (window.isOpen()) {
@@ -63,7 +84,7 @@ void Engine::run(int const target_fps)
     }
 }
 
-void Engine::input()
+inline void Engine::input()
 {
     mouse_clicked = false;
     mouse_pos = sf::Mouse::getPosition(window);
@@ -84,7 +105,7 @@ void Engine::input()
     }
 }
 
-void Engine::update()
+inline void Engine::update()
 {
 
     update_enemies();
@@ -95,7 +116,7 @@ void Engine::update()
     turret_button.update(mouse_pos, mouse_clicked);
 }
 
-void Engine::update_turret_placement()
+inline void Engine::update_turret_placement()
 {
     board.update_turret_placement_feedback(mouse_pos, turret_button.turret_selected);
 
@@ -122,7 +143,7 @@ void Engine::update_turret_placement()
     }
 }
 
-void Engine::update_enemies()
+inline void Engine::update_enemies()
 {
     if (enemies.empty()) {
         enemies.emplace_back(board.spawn_pos, board.tower_pos);
@@ -137,7 +158,7 @@ void Engine::update_enemies()
     }
 }
 
-void Engine::update_bullets()
+inline void Engine::update_bullets()
 {
     for (size_t i = 0; i < bullets.size();) {
         float dist = calc_dist(bullets[i].pos, bullets[i].target->shape.getPosition());
@@ -152,14 +173,14 @@ void Engine::update_bullets()
     }
 }
 
-void Engine::update_turrets()
+inline void Engine::update_turrets()
 {
     for (auto& turret : turrets) {
         turret.update(enemies, bullets);
     }
 }
 
-void Engine::draw()
+inline void Engine::draw()
 {
     window.clear(sf::Color(19, 19, 19));
 
